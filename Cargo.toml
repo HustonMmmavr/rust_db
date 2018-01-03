@@ -1,0 +1,14 @@
+[package]
+name = "RustDb"
+version = "0.1.0"
+authors = ["HustonMavr <huston.mavr@gmail.com>"]
+
+[dependencies]
+hyper = "0.11"
+futures = "0.1.14"
+hyper-router = "*"
+
+router = "*"
+
+[dependencies.iron]
+version = "*"
