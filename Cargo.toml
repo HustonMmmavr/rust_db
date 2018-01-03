@@ -7,8 +7,11 @@ authors = ["HustonMavr <huston.mavr@gmail.com>"]
 hyper = "0.11"
 futures = "0.1.14"
 hyper-router = "*"
-
+r2d2 = "0.8.2"
+r2d2_postgres = "*"
 router = "*"
+postgres = "0.15"
+persistent = "0.0.6"
 
 [dependencies.iron]
 version = "*"
