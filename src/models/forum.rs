@@ -7,7 +7,7 @@ use serde_json;
 pub struct JsonForum {
     pub slug: String,
     pub title: String,
-    pub user: String,
+    pub user: String
 }
 
 #[derive(Serialize)]
@@ -29,4 +29,12 @@ pub fn copy_forum(forum : &mut Forum, other:  JsonForum) {
     forum.slug = other.slug;
     forum.title = other.title;
     forum.user = other.user;
+}
+
+pub fn read_forum(forum: &mut Forum, row: Row) {
+    forum.title = row.get("title");
+    forum.slug = row.get("slug");
+    forum.posts = row.get("posts");
+    forum.user = row.get("owner_name");
+    forum.threads = row.get("threads");
 }

@@ -32,9 +32,9 @@ fn fill_route(router: &mut Router) {
     router.get("/api/user/:nickname/profile", controllers::user::get_user, "get_user_profile");
     router.post("/api/user/:nickname/profile", controllers::user::update_user, "update_user");
 //    // ------------------ forum ---------------------------
-//    router.post("/api/forum/create", controllers::forum::create(), "forum_create");
+    router.post("/api/forum/create", controllers::forum::create, "forum_create");
 //    router.post("/api/forum/:forum_slug/create", controllers::forum::create_thread, "create_thread");
-//    router.get("/api/forum/:slug/details", controllers::forum::get(), "get_forum");
+    router.get("/api/forum/:slug/details", controllers::forum::get_forum, "get_forum");
 //    router.get("/api/forum/:slug/threads", controllers::forum::get_threads, "get_threads");
 //    router.get("/api/forum/:slug/users", controllers::forum::get_users(), "get_users");
 //    // ---------------- post ------------------------------
