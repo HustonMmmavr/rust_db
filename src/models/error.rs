@@ -3,6 +3,6 @@ use serde_derive;
 use serde_json;
 
 #[derive(Serialize)]
-struct ErrorMsg {
-    message: &'static str,
+pub struct ErrorMsg {
+    pub message: &'static str,
 }

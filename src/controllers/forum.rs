@@ -21,50 +21,20 @@ use ijr;
 use db;
 use ijr::{JsonResponseMiddleware, JsonResponse};
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-struct JsonForum {
-    slug: String,
-    title: String,
-    user: String,
-}
-
-//const search_by_mail:
-
-#[derive(Serialize)]
-struct ErrorMsg {
-    message: &'static str,
-}
-
-#[derive(Serialize)]
-struct Forum {
-    id: i32,
-    title: String,
-    user: String,
-    slug: String,
-    threads: i32,
-    posts: i32
-}
-
-
-fn empty_forum() -> Forum {
-    return Forum{id : 0, title: String::new(), slug: String::new(), user: String::new(), threads:0, posts: 0 };
-}
-
-fn copy_forum(forum : &mut Forum, other:  JsonForum) {
-//    forum.slug = other.slug.unwrap();
-//    forum.title = other.title.unwrap();
-//    forum.user = other.user.unwrap();
-}
+use queries::forum as f_q;
+use models::user::{User, empty_user, copy_user};
+use models::error::{ErrorMsg};
+use models::forum::*;
 
 
 
-//pub fn create() -> IronResult<Response> {
-//    let mut resp = Response::new();
-//
-//    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
-//    let conn = db_pool.get().unwrap();
-//
-//    let mut forum = request.get::<bodyparser::Struct<JsonForum>>();
+pub fn create(request : &mut Request) -> IronResult<Response> {
+    let mut resp = Response::new();
+
+    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
+    let conn = db_pool.get().unwrap();
+
+    let mut forum = request.get::<bodyparser::Struct<JsonForum>>();
 //    let mut dbForum = empty_user();
 //    match  user {
 //        Ok(Some(user)) => {
@@ -72,8 +42,8 @@ fn copy_forum(forum : &mut Forum, other:  JsonForum) {
 //        }
 //        _ => panic!("No body")
 //    }
-//
-//    let ref nickname = request.extensions.get::<Router>().unwrap().find("nickname").unwrap_or("/");
+
+//    let ref  = request.extensions.get::<Router>().unwrap().find("nickname").unwrap_or("/");
 //    match conn.execute("INSERT INTO userprofiles (about, email, fullname, nickname) VALUES($1, $2::CITEXT, $3, $4::CITEXT)",
 //                       &[&dbUser.about,  &dbUser.email, &dbUser.fullname, nickname]) {
 //        Ok(val) => {
@@ -95,8 +65,8 @@ fn copy_forum(forum : &mut Forum, other:  JsonForum) {
 //            resp.set_mut(JsonResponse::json(users)).set_mut(status::Conflict);
 //        }
 //    }
-//    return Ok(resp);
-//}
+    return Ok(resp);
+}
 
 //pub fn
 

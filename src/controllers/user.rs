@@ -23,7 +23,8 @@ use ijr::{JsonResponseMiddleware, JsonResponse};
 
 use queries::user as u_q;
 use models::user as u_model;
-use self::u_model::{User, JsonUser};
+use models::error::{ErrorMsg};
+use self::u_model::{User, JsonUser, empty_user, copy_user, read_user};
 use managers::user_manager as u_manager;
 
 

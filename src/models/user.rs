@@ -5,21 +5,21 @@ use postgres::rows::Row;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct JsonUser {
-    id: Option<i32>,
-    nickname: Option<String>,
-    about: Option<String>,
-    fullname: Option<String>,
-    email: Option<String>,
+    pub id: Option<i32>,
+    pub nickname: Option<String>,
+    pub  about: Option<String>,
+    pub fullname: Option<String>,
+    pub email: Option<String>,
 }
 
 
 #[derive(Serialize)]
 pub struct User {
-    id: i32,
-    nickname: String,
-    about: String,
-    fullname: String,
-    email: String,
+    pub id: i32,
+    pub nickname: String,
+    pub about: String,
+    pub fullname: String,
+    pub email: String,
 }
 
 pub fn read_user(row: &Row) -> User {
