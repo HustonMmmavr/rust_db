@@ -17,7 +17,9 @@ use iron::status;
 use router::Router;
 use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 use r2d2::{Pool, PooledConnection};
-
+mod queries;
+mod models;
+mod managers;
 #[macro_use]
 mod db;
 mod conf;
@@ -44,15 +46,15 @@ fn fill_route(router: &mut Router) {
 
 
 
-
+//
 //use postgres::{Connection, TlsMode};
-
+//
 //struct Person {
 //    id: i32,
 //    name: String,
 //    data: Option<Vec<u8>>,
 //}
-
+//
 //fn main() {
 //    let conn = Connection::connect("postgres://mavr:951103@localhost:5432/test", TlsMode::None).unwrap();
 //    let conn = Connection::connect("postgres://mavr:951103@localhost:5432/test", TlsMode::None).unwrap();
@@ -66,10 +68,10 @@ fn fill_route(router: &mut Router) {
 //        name: "Steven".to_string(),
 //        data: None,
 //    };
-//    conn.execute("INSERT INTO person (name, data) VALUES ($1, $2)",
-//                 &[&me.name, &me.data]).unwrap();
+//    let b = conn.execute("Update person set name = 'b' WHERE name = 'Steven'",
+//                 &[]).unwrap();
 //    let query = &conn.query("SELECT id, name, data FROM person WHERE name='a'", &[]).unwrap();
-//    println!("{}", query.len());
+//    println!("{}", b);
 //    for row in &conn.query("SELECT id, name, data FROM person WHERE name='a'", &[]).unwrap() {
 //        let person = Person {
 //            id: row.get(0),
