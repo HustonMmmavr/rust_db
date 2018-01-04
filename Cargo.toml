@@ -17,6 +17,7 @@ params = "*"
 serde = "*"
 serde_derive = "*"
 serde_json = "*"
+iron-json-response = "*"
 
 [dependencies.iron]
 version = "*"

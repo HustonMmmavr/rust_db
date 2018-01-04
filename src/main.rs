@@ -6,32 +6,25 @@ extern crate postgres;
 extern crate persistent;
 extern crate params;
 extern crate bodyparser;
+extern crate iron_json_response as ijr;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
-mod controllers {pub mod user; pub mod forum; pub mod post; pub mod thread;}
+use ijr::{JsonResponseMiddleware, JsonResponse};
 
 use iron::prelude::*;
 use iron::status;
 use router::Router;
 use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 use r2d2::{Pool, PooledConnection};
-//use bodyparser;
 
 #[macro_use]
 mod db;
 mod conf;
+mod controllers {pub mod user; pub mod forum; pub mod post; pub mod thread;}
 
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
-
-//use db;
-//#[derive(Copy, Clone)]
-//pub struct DbPool;
-//impl iron::typemap::Key for DbPool {
-//    type Value = r2d2::Pool<r2d2_postgres::PostgresConnectionManager>;
-//}
-
-fn fill_route(router: &mut Router) {//, db : &mut co) {
+fn fill_route(router: &mut Router) {
     // ------------------ user ----------------------------
     router.post("/api/user/:nickname/create",controllers::user::create_user, "user_create");
     router.get("/api/user/:nickname/profile", controllers::user::get_user, "get_user_profile");
@@ -49,10 +42,43 @@ fn fill_route(router: &mut Router) {//, db : &mut co) {
     //router.get
 }
 
+
+
+
+//use postgres::{Connection, TlsMode};
+
+//struct Person {
+//    id: i32,
+//    name: String,
+//    data: Option<Vec<u8>>,
+//}
+
+//fn main() {
+//    let conn = Connection::connect("postgres://mavr:951103@localhost:5432/test", TlsMode::None).unwrap();
+//    let conn = Connection::connect("postgres://mavr:951103@localhost:5432/test", TlsMode::None).unwrap();
+////    conn.execute("CREATE TABLE person (
+////                    id              SERIAL PRIMARY KEY,
+////                    name            VARCHAR NOT NULL,
+////                    data            BYTEA
+////                  )", &[]).unwrap();
+//    let me = Person {
+//        id: 0,
+//        name: "Steven".to_string(),
+//        data: None,
+//    };
+//    conn.execute("INSERT INTO person (name, data) VALUES ($1, $2)",
+//                 &[&me.name, &me.data]).unwrap();
+//    let query = &conn.query("SELECT id, name, data FROM person WHERE name='a'", &[]).unwrap();
+//    println!("{}", query.len());
+//    for row in &conn.query("SELECT id, name, data FROM person WHERE name='a'", &[]).unwrap() {
+//        let person = Person {
+//            id: row.get(0),
+//            name: row.get(1),
+//            data: row.get(2),
+//        };
+////        println!("Found person {}", person.name);
+//    }
 //
-//fn handler(req: &mut Request) -> IronResult<Response> {
-//    let ref query = req.extensions.get::<Router>().unwrap().find("query").unwrap_or("/");
-//    Ok(Response::with((status::Ok, *query)))
 //}
 
 fn main() {
@@ -67,77 +93,6 @@ fn main() {
 
     chain.link_before(persistent::Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
     chain.link(persistent::Read::<conf::DbPool>::both(pool));
+    chain.link_after(JsonResponseMiddleware::new());
     Iron::new(chain).http("localhost:5000").unwrap();
-
 }
-
-//    match db::get_pool(uri) {
-//        Ok(pool) =>  chain.link(persistent::Read::<db::PostgresDB>::both(pool)),
-//        Err(err) => panic!("postgres: {}", err),
-//
-//    }
-
-//    Err(err) => {
-//            panic!("postgres: {}", err);
-////            std::process::exit(-1);
-//        }
-
-//    pool =
-//        Err(err) => {
-//            panic!("postgres: {}", err);
-//            std::process::exit(-1);
-//        }
-//    };
-
-//    chain.link(persistent::Read::<DbPool>::both(
-//        pool));
-
-
-//    chain.link_before(pool);
-//    let pool = ::r2d2::Pool::new(manager).unwrap();
-
-
-//pub fn get_pool(uri: &str) -> Result<PostgresPool, Box<Error>> {
-//    let manager = try!(PostgresConnectionManager::new(uri, TlsMode::None));
-////    let pool = ::r2d2::Pool::new(manager).unwrap();
-//    let pool = try!(r2d2::Pool::new(manager));
-//    Ok(pool)
-//}
-
-//extern crate iron;
-//extern crate router;
-
-//use iron::prelude::*;
-//use iron::status;
-//use router::Router;
-
-//fn main() {
-//    let mut router = Router::new();           // Alternative syntax:
-//    router.get("/", handler, "index");        // let router = router!(index: get "/" => handler,
-//    router.get("/:query", handler, "query");  //                      query: get "/:query" => handler);
-//
-//    Iron::new(router).http("localhost:3000").unwrap();
-//
-//    fn handler(req: &mut Request) -> IronResult<Response> {
-//        let ref query = req.extensions.get::<Router>().unwrap().find("query").unwrap_or("/");
-//        Ok(Response::with((status::Ok, *query)))
-//
-
-//    let manager = PostgresConnectionManager::new("postgres://mavr:951103@localhost/test",
-//                                                 TlsMode::None).unwrap();
-//    let manager = ::r2d2_postgres::PostgresConnectionManager::new(cn_str, ::postgres::SslMode::None).unwrap();
-//    let manager = ::r2d2_postgres::PostgresConnectionManager::new(cn_str, ::postgres::SslMode::None).unwrap();
-
-//    let config = ::r2d2::Conn::builder().pool_size(8).build();
-//    ::r2d2::Pool::new(config, manager).unwrap()
-//    let a = pool.max_size();
-//    let b = "---------------------------------------";
-//    println!("{}", b);
-//    println!("{}", a.to_string());
-//    let conn = pool.get();
-//    let mut conn = pool.get().unwrap();
-//    let mut chain = Chain::new(router);
-
-//use r2d2_postgres::{PostgresConnectionManager;
-//extern crate postgres;
-//use controllers::user;
