@@ -4,6 +4,11 @@ extern crate r2d2;
 extern crate r2d2_postgres;
 extern crate postgres;
 extern crate persistent;
+extern crate params;
+extern crate bodyparser;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
 mod controllers {pub mod user; pub mod forum; pub mod post; pub mod thread;}
 
 use iron::prelude::*;
@@ -11,10 +16,13 @@ use iron::status;
 use router::Router;
 use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 use r2d2::{Pool, PooledConnection};
+//use bodyparser;
 
 #[macro_use]
 mod db;
 mod conf;
+
+const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 
 //use db;
 //#[derive(Copy, Clone)]
@@ -41,37 +49,34 @@ fn fill_route(router: &mut Router) {//, db : &mut co) {
     //router.get
 }
 
-
-fn handler(req: &mut Request) -> IronResult<Response> {
-    let ref query = req.extensions.get::<Router>().unwrap().find("query").unwrap_or("/");
-    Ok(Response::with((status::Ok, *query)))
-}
-
-
-//pub fn get_pool(uri: &str) -> Result<PostgresPool, Box<Error>> {
-//    let manager = try!(PostgresConnectionManager::new(uri, TlsMode::None));
-////    let pool = ::r2d2::Pool::new(manager).unwrap();
-//    let pool = try!(r2d2::Pool::new(manager));
-//    Ok(pool)
+//
+//fn handler(req: &mut Request) -> IronResult<Response> {
+//    let ref query = req.extensions.get::<Router>().unwrap().find("query").unwrap_or("/");
+//    Ok(Response::with((status::Ok, *query)))
 //}
 
 fn main() {
 
-    let mut uri = "postgres://mavr:951103@localhost/test";
+    let mut uri = "postgres://mavr:951103@localhost/test1";
     let mut router = Router::new();           // Alternative syntax:
     fill_route(&mut router);
     let mut chain = Chain::new(router);
 
     let manager = (PostgresConnectionManager::new(uri, TlsMode::None)).unwrap();
-//    let pool = ::r2d2::Pool::new(manager).unwrap();
     let pool = (r2d2::Pool::new(manager)).unwrap();
+
+    chain.link_before(persistent::Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
+    chain.link(persistent::Read::<conf::DbPool>::both(pool));
+    Iron::new(chain).http("localhost:5000").unwrap();
+
+}
 
 //    match db::get_pool(uri) {
 //        Ok(pool) =>  chain.link(persistent::Read::<db::PostgresDB>::both(pool)),
 //        Err(err) => panic!("postgres: {}", err),
 //
 //    }
-    chain.link(persistent::Read::<conf::DbPool>::both(pool));
+
 //    Err(err) => {
 //            panic!("postgres: {}", err);
 ////            std::process::exit(-1);
@@ -89,10 +94,34 @@ fn main() {
 
 
 //    chain.link_before(pool);
-    Iron::new(chain).http("localhost:5000").unwrap();
+//    let pool = ::r2d2::Pool::new(manager).unwrap();
 
-}
 
+//pub fn get_pool(uri: &str) -> Result<PostgresPool, Box<Error>> {
+//    let manager = try!(PostgresConnectionManager::new(uri, TlsMode::None));
+////    let pool = ::r2d2::Pool::new(manager).unwrap();
+//    let pool = try!(r2d2::Pool::new(manager));
+//    Ok(pool)
+//}
+
+//extern crate iron;
+//extern crate router;
+
+//use iron::prelude::*;
+//use iron::status;
+//use router::Router;
+
+//fn main() {
+//    let mut router = Router::new();           // Alternative syntax:
+//    router.get("/", handler, "index");        // let router = router!(index: get "/" => handler,
+//    router.get("/:query", handler, "query");  //                      query: get "/:query" => handler);
+//
+//    Iron::new(router).http("localhost:3000").unwrap();
+//
+//    fn handler(req: &mut Request) -> IronResult<Response> {
+//        let ref query = req.extensions.get::<Router>().unwrap().find("query").unwrap_or("/");
+//        Ok(Response::with((status::Ok, *query)))
+//
 
 //    let manager = PostgresConnectionManager::new("postgres://mavr:951103@localhost/test",
 //                                                 TlsMode::None).unwrap();
@@ -112,42 +141,3 @@ fn main() {
 //use r2d2_postgres::{PostgresConnectionManager;
 //extern crate postgres;
 //use controllers::user;
-//
-//scope '/api' do
-//scope '/user/:nickname' do
-//post '/create',  :constraints => { :nickname => /[\w+\.]+/ },  to: 'user#create'
-//get  '/profile', :constraints => { :nickname => /[\w+\.]+/ },   to: 'user#get'
-//post '/profile', :constraints => { :nickname => /[\w+\.]+/ },   to: 'user#update'
-//end
-//
-//scope '/forum' do
-//post '/create', to: 'forum#create'
-//post '/:forum_slug/create', to: 'forum#create_thread'
-//scope '/:slug' do
-//get '/details', to: 'forum#get_details'
-//get '/threads', to: 'forum#get_threads'
-//get '/users', to: 'forum#get_users'
-//end
-//end
-//
-//scope '/thread' do
-//scope ':slug_or_id' do
-//post '/create', to: 'thread#create_post'
-//get '/details', to: 'thread#get_details'
-//post '/details', to: 'thread#set_details'
-//get '/posts', to: 'thread#get_posts'
-//post '/vote', to: 'thread#vote'
-//end
-//end
-//
-//scope '/service' do
-//get '/status', to: 'service#count'
-//post '/clear', to: 'service#delete'
-//end
-//
-//scope '/post' do
-//scope '/:id' do
-//get '/details', to: 'post#get_details'
-//post '/details', to: 'post#set_details'
-//end
-//end
