@@ -10,7 +10,7 @@ pub struct JsonForum {
     pub user: String
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct Forum {
     pub id: i32,
     pub title: String,

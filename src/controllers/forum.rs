@@ -129,6 +129,14 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
 pub fn get_threads(request : &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
 
+//    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
+//    let conn = db_pool.get().unwrap();
+//
+//    let ref slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap_or("/");
+//    match f_m::get_users(slug, &conn) {
+//        Ok(val) => println!("{:?}", val),
+//        Err(_) => println!("nnn")
+//    }
     resp.set_mut(JsonResponse::json(ErrorMsg{message: "err"})).set_mut(status::Conflict);
     return Ok(resp);
 }
@@ -136,6 +144,14 @@ pub fn get_threads(request : &mut Request) -> IronResult<Response> {
 pub fn get_users(request : &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
 
+    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
+    let conn = db_pool.get().unwrap();
+
+    let ref slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap_or("/");
+    match f_m::get_users(slug, &conn) {
+        Ok(val) => println!("{:?}", val),
+        Err(_) => println!("nnn")
+    }
     resp.set_mut(JsonResponse::json(ErrorMsg{message: "err"})).set_mut(status::Conflict);
     return Ok(resp);
 }

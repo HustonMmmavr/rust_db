@@ -57,7 +57,3 @@ pub fn read_thread(thread: &mut Thread, row: Row) {
     let time = format!("{:?}", tz);
     thread.created = Some(time.to_string());
 }
-//    println!("{:?}", data);
-//    let dt = time::at_utc(tz);//.get_time();
-//    print!("{:?}", tz);
-//    tz.??

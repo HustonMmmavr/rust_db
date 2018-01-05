@@ -10,19 +10,42 @@ use std;
 use postgres;
 use postgres::Error;
 use postgres::error::SqlState;
+use chrono::Utc;
+use chrono;
+use time;
+use chrono::prelude::*;
+use time::Duration;
+use std::str::FromStr;
+
+pub struct TimeTZ {
+    t: Option<DateTime<Utc>>
+}
+
+pub fn empty_time() -> TimeTZ {
+    return TimeTZ{t: None};
+}
 
 pub fn create_thread(thread: &mut Thread, conn: &PostgresConnection) -> Result<Thread, i32> {
-    match conn.query(t_q::create_thread, &[&thread.author, &thread.created, &thread.forum, &thread.message, &thread.slug, &thread.title]) {
+    let mut tz = empty_time();
+
+    match thread.created  {
+        Some(ref val) => tz = TimeTZ{t: Some(chrono::DateTime::<Utc>::from_str(val).unwrap())},
+        None => tz = TimeTZ{t: None}
+    }
+
+    match conn.query(t_q::create_thread, &[&thread.author, &tz.t, &thread.forum, &thread.message, &thread.slug, &thread.title]) {
         Ok(val) => {
             let mut id: i32 = 0;
             for row in &val {
                 id = row.get(0);
             }
+//            println
 
             let thread = get_thread(&id, conn).unwrap();
-            return Ok(thread)
+            return Ok(thread);
         }
         Err(e) => {
+            println!("{:?}", e);
             let code = e.code().unwrap().code();
             if code == "23502" {
                 return Err(404);

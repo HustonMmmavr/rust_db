@@ -13,7 +13,7 @@ pub struct JsonUser {
 }
 
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct User {
     pub id: i32,
     pub nickname: String,

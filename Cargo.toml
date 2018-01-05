@@ -10,8 +10,9 @@ hyper-router = "*"
 r2d2 = "0.8.2"
 r2d2_postgres = "*"
 router = "*"
+postgres-binary-copy = "0.5.0"
 chrono = { version = "0.4", features = ["serde", "rustc-serialize"] }
-
+streaming-iterator="*"
 persistent = "0.0.6"
 params = "*"
 

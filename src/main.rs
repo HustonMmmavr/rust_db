@@ -43,6 +43,7 @@ fn fill_route(router: &mut Router) {
 //    // ---------------- post ------------------------------
 //    router.get("/api/post/:id/details", controllers::post::get_details, "get_details");
 //    router.post("/api/post/:id/details", controllers::post::set_details, "set_details");
+    router.post("/api/thread/:slug/create", controllers::thread::create_posts, "create_posts");
 //    // ---------------  thread -----------------
     //router.get
 }
@@ -86,6 +87,34 @@ fn fill_route(router: &mut Router) {
 //
 //}
 
+//extern crate postgres;
+//extern crate postgres_binary_copy;
+//extern crate streaming_iterator;
+
+//use postgres::{Connection, TlsMode};
+//use postgres::types::{ToSql, INT4, VARCHAR, CITEXT, TIMESTAMPTZ, };
+//use postgres_binary_copy::BinaryCopyReader;
+//use streaming_iterator::StreamingIterator;
+//
+//fn main() {
+//    let conn = Connection::connect("postgres://mavr:951103@localhost",
+//                                   TlsMode::None).unwrap();
+//
+////    conn.execute("CREATE TABLE foo (id INT PRIMARY KEY, bar VARCHAR)", &[])
+////        .unwrap();
+//
+//    let types = &[INT4, VARCHAR];
+//    let data: Vec<Box<ToSql>> = vec![Box::new(3i32), Box::new("hello"),
+//                                     Box::new(4i32), Box::new("world")];
+//    let data = streaming_iterator::convert(data.into_iter()).map_ref(|v| &**v);
+//    let mut reader = BinaryCopyReader::new(types, data);
+//
+//    let stmt = conn.prepare("COPY aa (id, bar) FROM STDIN (FORMAT binary)").unwrap();
+//    stmt.copy_in(&[], &mut reader).unwrap();
+//}
+//
+
+//
 fn main() {
 
     let mut uri = "postgres://mavr:951103@localhost/test1";
