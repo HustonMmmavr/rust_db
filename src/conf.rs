@@ -2,7 +2,7 @@ use persistent;
 use iron;
 use iron::prelude::*;
 use iron::status;
-use router::Router;
+//use router::Router;
 use r2d2;
 use r2d2_postgres;
 use r2d2_postgres::{TlsMode, PostgresConnectionManager};

@@ -28,6 +28,8 @@ use models::error::{ErrorMsg};
 use models::forum::*;
 use managers::forum_manager::*;
 use managers::forum_manager as f_m;
+use managers::thread_manager as t_m;
+use models::thread::{Thread, JsonThread, empty_thread, copy_json_thread};
 
 
 pub fn create(request : &mut Request) -> IronResult<Response> {
@@ -48,7 +50,7 @@ pub fn create(request : &mut Request) -> IronResult<Response> {
 
     match create_forum(&dbForum, &conn) {
         Ok(forum) => {
-            resp.set_mut(JsonResponse::json(dbForum)).set_mut(status::Created);
+            resp.set_mut(JsonResponse::json(forum)).set_mut(status::Created);
             return Ok(resp);
         }
         Err(val) => {
@@ -71,7 +73,7 @@ pub fn get_forum(request : &mut Request) -> IronResult<Response> {
     let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
     let conn = db_pool.get().unwrap();
 
-    let mut forum = request.get::<bodyparser::Struct<JsonForum>>();
+//    let mut forum = request.get::<bodyparser::Struct<JsonForum>>();
     let ref slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap_or("/");
 
     match f_m::get_forum(slug, &conn) {
@@ -86,6 +88,54 @@ pub fn get_forum(request : &mut Request) -> IronResult<Response> {
     }
 }
 
-pub fn get_users() {
+pub fn create_thread(request : &mut Request) -> IronResult<Response> {
+    let mut resp = Response::new();
 
+    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
+    let conn = db_pool.get().unwrap();
+
+    let mut thread = request.get::<bodyparser::Struct<JsonThread>>();
+    let ref slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap_or("/");
+    let mut dbThread = empty_thread();
+
+    match thread {
+        Ok(Some(thread)) => {
+            copy_json_thread(&mut dbThread, thread);
+            dbThread.forum = slug.to_string();
+        }
+        _ => panic!("No body")
+    }
+
+    match t_m::create_thread(&mut dbThread, &conn) {
+        Ok(val) => {
+            resp.set_mut(JsonResponse::json(val)).set_mut(status::Created);
+            return Ok(resp);
+        }
+        Err(e) => {
+            if e == 404 {
+                resp.set_mut(JsonResponse::json(ErrorMsg{message: "Error"})).set_mut(status::NotFound);
+                return Ok(resp);
+            }
+            else {
+                let slugg = dbThread.slug.unwrap().to_string();
+                let existing_thread = t_m::get_thread_by_slug(&slugg, &conn).unwrap();
+                resp.set_mut(JsonResponse::json(existing_thread)).set_mut(status::Conflict);
+                return Ok(resp);
+            }
+        }
+    }
+}
+
+pub fn get_threads(request : &mut Request) -> IronResult<Response> {
+    let mut resp = Response::new();
+
+    resp.set_mut(JsonResponse::json(ErrorMsg{message: "err"})).set_mut(status::Conflict);
+    return Ok(resp);
+}
+
+pub fn get_users(request : &mut Request) -> IronResult<Response> {
+    let mut resp = Response::new();
+
+    resp.set_mut(JsonResponse::json(ErrorMsg{message: "err"})).set_mut(status::Conflict);
+    return Ok(resp);
 }

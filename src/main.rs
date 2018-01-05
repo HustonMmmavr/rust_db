@@ -6,6 +6,8 @@ extern crate postgres;
 extern crate persistent;
 extern crate params;
 extern crate bodyparser;
+extern crate time;
+extern crate chrono;
 extern crate iron_json_response as ijr;
 #[macro_use]
 extern crate serde_derive;
@@ -20,6 +22,7 @@ use r2d2::{Pool, PooledConnection};
 mod queries;
 mod models;
 mod managers;
+//use std;
 #[macro_use]
 mod db;
 mod conf;
@@ -33,10 +36,10 @@ fn fill_route(router: &mut Router) {
     router.post("/api/user/:nickname/profile", controllers::user::update_user, "update_user");
 //    // ------------------ forum ---------------------------
     router.post("/api/forum/create", controllers::forum::create, "forum_create");
-//    router.post("/api/forum/:forum_slug/create", controllers::forum::create_thread, "create_thread");
+    router.post("/api/forum/:slug/create", controllers::forum::create_thread, "create_thread");
     router.get("/api/forum/:slug/details", controllers::forum::get_forum, "get_forum");
-//    router.get("/api/forum/:slug/threads", controllers::forum::get_threads, "get_threads");
-//    router.get("/api/forum/:slug/users", controllers::forum::get_users(), "get_users");
+    router.get("/api/forum/:slug/threads", controllers::forum::get_threads, "get_threads");
+    router.get("/api/forum/:slug/users", controllers::forum::get_users, "get_users");
 //    // ---------------- post ------------------------------
 //    router.get("/api/post/:id/details", controllers::post::get_details, "get_details");
 //    router.post("/api/post/:id/details", controllers::post::set_details, "set_details");

@@ -12,14 +12,12 @@ pub fn create_forum(forum: & Forum, conn: &PostgresConnection) -> Result<Forum, 
     let mut u_id: i32 =0;
     for row in &query {
         u_id = row.get("id");
-    }
+    }//                println!("Not found");
+
 
     match conn.execute(f_q::create_forum, &[&u_id, &forum.title, &forum.slug]) {
         Ok(val) => {
-            let mut new_forum = empty_forum();
-            new_forum.title = forum.title.to_string();
-            new_forum.slug = forum.slug.to_string();
-            new_forum.user = forum.user.to_string();
+            let mut new_forum = get_forum(&forum.slug, conn).unwrap();
             return Ok(new_forum)
         },
         Err(err) => return Err(409)
@@ -38,5 +36,4 @@ pub fn get_forum(slug: &str, conn: &PostgresConnection)  -> Result<Forum, i32> {
     }
 
     return Ok(forum);
-
 }
