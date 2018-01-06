@@ -45,7 +45,7 @@ pub fn create_thread(thread: &mut Thread, conn: &PostgresConnection) -> Result<T
             return Ok(thread);
         }
         Err(e) => {
-            println!("{:?}", e);
+//            println!("{:?}", e);
             let code = e.code().unwrap().code();
             if code == "23502" {
                 return Err(404);

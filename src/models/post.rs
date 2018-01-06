@@ -14,19 +14,21 @@ use serde_json;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct JsonPost {
-    pub title: Option<String>,
+//    pub title: Option<String>,
     pub author: Option<String>,
     pub message: Option<String>,
 //    pub forum: String,
 //    pub thread: i32,
     pub parent: Option<i32>,
-    pub created: Option<String>
+//    pub created: Option<String>
 }
 
-//#[derive(Serialize, Deserialize, Debug)]
-//pub struct JsonPosts {
-//    pub posts: Array<Post>,
-//}
+impl JsonPost {
+    pub fn set_author(&mut self, author: String) {
+        self.author = Some(author);
+    }
+}
+
 
 #[derive(Serialize, Debug)]
 pub struct Post {
@@ -36,7 +38,27 @@ pub struct Post {
     pub forum: String,
     pub thread: i32,
     pub parent: i32,
-    pub created: Option<String>,
+    pub created: String,
     pub isEdited: bool,
 }
 
+use chrono::DateTime;
+pub struct DbPost {
+    pub title: String,
+    pub author: i32,
+    pub message: String,
+    pub forum: String,
+    pub thread: i32,
+    pub parent: i32,
+    pub created: chrono::DateTime::<Utc>,
+}
+
+pub fn empty_post () -> Post {
+    return Post{title: String::new(), author: String::new(),
+    message : String::new(),
+    forum :  String::new(),
+    thread  : 0,
+    parent : 0,
+    created: String::new(),
+    isEdited : false}
+}

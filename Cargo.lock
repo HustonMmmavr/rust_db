@@ -13,6 +13,7 @@ dependencies = [
  "persistent 0.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "postgres 0.15.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "postgres-binary-copy 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "postgres_array 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "r2d2_postgres 0.14.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "router 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -728,6 +729,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "postgres_array"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "fallible-iterator 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "postgres-protocol 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "postgres-shared 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "quote"
 version = "0.3.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1228,6 +1239,7 @@ dependencies = [
 "checksum postgres-binary-copy 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e682579b6d3e55a9467a6a378574fa32568668ffb49fa89517d78f2c64a62fa2"
 "checksum postgres-protocol 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "2b5cf13fd1f61ca10b374a44b7feb0636fce67cd3bd42f925f9186b0e7ccec7b"
 "checksum postgres-shared 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "22fcb88c55471615fea5217b41ab59df5a00665edb4e92f67c35119b7e8948ed"
+"checksum postgres_array 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = "47a66591ba02b424b59a1fc157846dc1c01c986d2bca61c88e0b01ad71376a37"
 "checksum quote 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)" = "7a6e920b65c65f10b2ae65c831a81a073a89edd28c7cce89475bff467ab4167a"
 "checksum r2d2 0.8.2 (registry+https://github.com/rust-lang/crates.io-index)" = "f9078ca6a8a5568ed142083bb2f7dc9295b69d16f867ddcc9849e51b17d8db46"
 "checksum r2d2_postgres 0.14.0 (registry+https://github.com/rust-lang/crates.io-index)" = "78c7fe9c0c3d2c298cf262bc3ce4b89cdf0eab620fd9fe759f65b34a1a00fb93"
