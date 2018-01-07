@@ -18,7 +18,7 @@ use ijr::{JsonResponseMiddleware, JsonResponse};
 use iron::prelude::*;
 use iron::status;
 use router::Router;
-//use r2d2_postgres::{TlsMode, PostgresConnectionManager};
+use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 use r2d2::{Pool, PooledConnection};
 mod queries;
 mod models;
@@ -89,36 +89,36 @@ fn fill_route(router: &mut Router) {
 //}
 
 //extern crate postgres;
-extern crate postgres_binary_copy;
-extern crate streaming_iterator;
-
-use postgres::{Connection, TlsMode};
-use postgres::types::{ToSql, INT4, VARCHAR, TIMESTAMPTZ, };
-use postgres_binary_copy::BinaryCopyReader;
-use streaming_iterator::StreamingIterator;
-
-fn main() {
-    let conn = Connection::connect("postgres://mavr:951103@localhost",
-                                   TlsMode::None).unwrap();
-
-//    conn.execute("CREATE TABLE foo (id INT PRIMARY KEY, bar VARCHAR)", &[])
-//        .unwrap();
-
-    let mut da: Vec<i32> = Vec::new();
-    da.push(1);
-    da.push(2);
-    let f: postgres_array::Array<i32> = postgres_array::Array::from_vec(da, 1);
-    println!("{:?}", f);
-    let post 
-    let types = &[INT4, VARCHAR,];
-    let data: Vec<Box<ToSql>> = vec![Box::new(3i32), Box::new("hello"),
-                                     Box::new(4i32), Box::new("world")];
-    let data = streaming_iterator::convert(data.into_iter()).map_ref(|v| &**v);
-    let mut reader = BinaryCopyReader::new(types, data);
-
-//    let stmt = conn.prepare("COPY aa (id, bar) FROM STDIN (FORMAT binary)").unwrap();
-//    stmt.copy_in(&[], &mut reader).unwrap();
-}
+//extern crate postgres_binary_copy;
+//extern crate streaming_iterator;
+//
+//use postgres::{Connection, TlsMode};
+//use postgres::types::{ToSql, INT4, VARCHAR, TIMESTAMPTZ, };
+//use postgres_binary_copy::BinaryCopyReader;
+//use streaming_iterator::StreamingIterator;
+//
+//fn main() {
+//    let conn = Connection::connect("postgres://mavr:951103@localhost",
+//                                   TlsMode::None).unwrap();
+//
+////    conn.execute("CREATE TABLE foo (id INT PRIMARY KEY, bar VARCHAR)", &[])
+////        .unwrap();
+//
+//    let mut da: Vec<i32> = Vec::new();
+//    da.push(1);
+//    da.push(2);
+//    let f: postgres_array::Array<i32> = postgres_array::Array::from_vec(da, 1);
+//    println!("{:?}", f);
+//    let post
+//    let types = &[INT4, VARCHAR,];
+//    let data: Vec<Box<ToSql>> = vec![Box::new(3i32), Box::new("hello"),
+//                                     Box::new(4i32), Box::new("world")];
+//    let data = streaming_iterator::convert(data.into_iter()).map_ref(|v| &**v);
+//    let mut reader = BinaryCopyReader::new(types, data);
+//
+////    let stmt = conn.prepare("COPY aa (id, bar) FROM STDIN (FORMAT binary)").unwrap();
+////    stmt.copy_in(&[], &mut reader).unwrap();
+//}
 
 
 
@@ -167,18 +167,18 @@ fn main() {
 //}
 
 //
-//fn main() {
-//
-//    let mut uri = "postgres://mavr:951103@localhost/test1";
-//    let mut router = Router::new();           // Alternative syntax:
-//    fill_route(&mut router);
-//    let mut chain = Chain::new(router);
-//
-//    let manager = (PostgresConnectionManager::new(uri, TlsMode::None)).unwrap();
-//    let pool = (r2d2::Pool::new(manager)).unwrap();
-//
-//    chain.link_before(persistent::Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
-//    chain.link(persistent::Read::<conf::DbPool>::both(pool));
-//    chain.link_after(JsonResponseMiddleware::new());
-//    Iron::new(chain).http("localhost:5000").unwrap();
-//}
+fn main() {
+
+    let mut uri = "postgres://mavr:951103@localhost/test1";
+    let mut router = Router::new();           // Alternative syntax:
+    fill_route(&mut router);
+    let mut chain = Chain::new(router);
+
+    let manager = (PostgresConnectionManager::new(uri, TlsMode::None)).unwrap();
+    let pool = (r2d2::Pool::new(manager)).unwrap();
+
+    chain.link_before(persistent::Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
+    chain.link(persistent::Read::<conf::DbPool>::both(pool));
+    chain.link_after(JsonResponseMiddleware::new());
+    Iron::new(chain).http("localhost:5000").unwrap();
+}

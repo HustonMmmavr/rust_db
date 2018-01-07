@@ -113,6 +113,7 @@ CREATE TRIGGER insert_forums_trigger AFTER INSERT ON forums
 
 
 ------------------- TRIGGER FOR UPDATE threads ---------------
+
 CREATE OR REPLACE FUNCTION insert_threads_func() RETURNS TRIGGER AS
 $insert_threads_trigger$
   BEGIN
@@ -133,21 +134,20 @@ CREATE TRIGGER insert_threads_trigger AFTER INSERT ON threads
 
 
 ------------------- TRIGGER FOR UPDATE posts ------------------------
-
--- CREATE OR REPLACE FUNCTION insert_posts_func() RETURNS TRIGGER AS
--- $insert_posts_trigger$
---   BEGIN
---       UPDATE posts SET author_name = (SELECT nickname FROM userprofiles WHERE id = NEW.author_id),
---                       forum_slug = (SELECT slug FROM forums WHERE id = NEW.forum_id)
---       WHERE id = NEW.id;
---       INSERT INTO forums_and_users(user_id, forum_id) VALUES(NEW.author_id, NEW.forum_id);
---     RETURN NULL;
---   END;
--- $insert_posts_trigger$ LANGUAGE plpgsql;
--- --
--- DROP TRIGGER IF EXISTS insert_posts_trigger ON posts;
--- CREATE TRIGGER insert_posts_trigger AFTER INSERT ON posts
---   FOR EACH ROW EXECUTE PROCEDURE insert_posts_func();
+--  author_name = (SELECT nickname FROM userprofiles WHERE id = NEW.author_id),
+CREATE OR REPLACE FUNCTION insert_posts_func() RETURNS TRIGGER AS
+$insert_posts_trigger$
+  BEGIN
+      UPDATE posts SET forum_ = (SELECT slug FROM forums WHERE id = NEW.forum_id)
+      WHERE id = NEW.id;
+      INSERT INTO forums_and_users(user_id, forum_id) VALUES(NEW.author_id, NEW.forum_id);
+    RETURN NULL;
+  END;
+$insert_posts_trigger$ LANGUAGE plpgsql;
+--
+DROP TRIGGER IF EXISTS insert_posts_trigger ON posts;
+CREATE TRIGGER insert_posts_trigger AFTER INSERT ON posts
+  FOR EACH ROW EXECUTE PROCEDURE insert_posts_func();
 
 -- -------------------------------------------------------------------
 -- CREATE OR REPLACE FUNCTION create_or_update_vote(u_id integer, t_id integer, v integer)

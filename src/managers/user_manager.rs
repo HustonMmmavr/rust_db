@@ -19,3 +19,18 @@ pub fn find_user_id(nick: &String, conn: &PostgresConnection) -> Result<i32, i32
     }
     return Ok(u_id);
 }
+
+pub fn find_user_id_and_nick(nick: &String, conn: &PostgresConnection) -> Result<(String, i32), i32> {
+    let query = conn.query(u_q::GET_USER_ID_AND_NICK, &[nick]).unwrap();
+    if (query.len() == 0) {
+        return Err(404);
+    }
+
+    let mut u_id: i32 =0;
+    let mut u_name: String =String::new();
+    for row in &query {
+        u_id = row.get("id");
+        u_name = row.get("nickname");
+    }
+    return Ok((u_name, u_id));
+}

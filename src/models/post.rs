@@ -2,15 +2,7 @@ use postgres::rows::Row;
 #[macro_use]
 use serde_derive;
 use serde_json;
-
-//private Integer id;
-//private Integer parent;
-//private String author;
-//private String message;
-//private Boolean isEdited;
-//private String forum;
-//private Integer thread;
-//private String created;
+use chrono;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct JsonPost {
@@ -20,7 +12,6 @@ pub struct JsonPost {
 //    pub forum: String,
 //    pub thread: i32,
     pub parent: Option<i32>,
-//    pub created: Option<String>
 }
 
 impl JsonPost {
@@ -32,7 +23,8 @@ impl JsonPost {
 
 #[derive(Serialize, Debug)]
 pub struct Post {
-    pub title: String,
+//    pub title: String,
+    pub id: i64,
     pub author: String,
     pub message: String,
     pub forum: String,
@@ -42,7 +34,9 @@ pub struct Post {
     pub isEdited: bool,
 }
 
-use chrono::DateTime;
+//imp
+
+//use chrono::DateTime;
 pub struct DbPost {
     pub title: String,
     pub author: i32,
@@ -50,11 +44,13 @@ pub struct DbPost {
     pub forum: String,
     pub thread: i32,
     pub parent: i32,
-    pub created: chrono::DateTime::<Utc>,
+    pub created: chrono::DateTime<chrono::Utc>,
 }
 
+
+
 pub fn empty_post () -> Post {
-    return Post{title: String::new(), author: String::new(),
+    return Post{ id:0, author: String::new(),
     message : String::new(),
     forum :  String::new(),
     thread  : 0,

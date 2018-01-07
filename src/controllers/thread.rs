@@ -53,7 +53,7 @@ pub fn create_posts(request : &mut Request) -> IronResult<Response> {
     match thread_option {
         Ok(d) => thread = d,
         Err(err) => {
-            resp.set_mut(JsonResponse::json(ErrorMsg{message: "Not found"})).set_mut(status::Created);
+            resp.set_mut(JsonResponse::json(ErrorMsg{message: "Not found"})).set_mut(status::NotFound);
             return Ok(resp);
         }
     }
@@ -64,6 +64,21 @@ pub fn create_posts(request : &mut Request) -> IronResult<Response> {
         resp.set_mut(JsonResponse::json(json_posts)).set_mut(status::Created);
         return Ok(resp);
     }
+
+    match p_m::create_posts(&thread, json_posts, &conn) {
+        Ok(val) => {
+            resp.set_mut(JsonResponse::json(val)).set_mut(status::Created);
+            return Ok(resp);
+        }
+        Err(val) => if (val == 409) {
+            resp.set_mut(JsonResponse::json(ErrorMsg{message: "Not found thread"})).set_mut(status::Conflict);
+            return Ok(resp);
+        } else {
+            resp.set_mut(JsonResponse::json(ErrorMsg{message: "Not found user"})).set_mut(status::NotFound);
+            return Ok(resp);
+        }
+    }
+
 
 
 
@@ -105,36 +120,29 @@ pub fn create_posts(request : &mut Request) -> IronResult<Response> {
 //        case DB_ERROR:
 //        return new ResponseEntity<>(new ErrorView(status2.getMessage()), null, HttpStatus.NOT_FOUND);
 //    }
-
-    let mut posts: Vec<Post> = Vec::new();
-
-//    pub const INSERT_POST: &'static str = "INSERT INTO post(id, parent_id, author_id, created, forum_slug, message, thread_id, id_of_root)\
-
-    for json_post in json_posts {
-        let u_id;
-        match  find_user_id(&json_post.author.unwrap(), &conn) {
-            Ok(id) => u_id = id,
-            Err(err) => {
-                resp.set_mut(JsonResponse::json(ErrorMsg{message: "No such user"})).set_mut(status::Created);
-                return Ok(resp);
-            }
-        }
-        let p_id = conn.query(SELECT_NEXT_POST_ID, &[]).unwrap();
-
-        let post = empty_post();
-        if json_post.parent == None || json_post.parent == Some(0) {
-
-        } else {
-
-        }
-    }
-
-    match p_m::create_posts(&thread, &posts, &conn) {
-        Ok(_) => println!(""),
-        Err(_) => println!("")
-    }
-
-
+//
+//    let mut posts: Vec<Post> = Vec::new();
+//
+////    pub const INSERT_POST: &'static str = "INSERT INTO post(id, parent_id, author_id, created, forum_slug, message, thread_id, id_of_root)\
+//
+//    for json_post in json_posts {
+//        let u_id;
+//        match  find_user_id(&json_post.author.unwrap(), &conn) {
+//            Ok(id) => u_id = id,
+//            Err(err) => {
+//                resp.set_mut(JsonResponse::json(ErrorMsg{message: "No such user"})).set_mut(status::Created);
+//                return Ok(resp);
+//            }
+//        }
+//        let p_id = conn.query(SELECT_NEXT_POST_ID, &[]).unwrap();
+//
+//        let post = empty_post();
+//        if json_post.parent == None || json_post.parent == Some(0) {
+//
+//        } else {
+//
+//        }
+//    }
     //    for post in &mut val {
 //        post.set_author("f".to_string());
 //        println!("{:?}", post);

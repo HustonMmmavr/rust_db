@@ -6,6 +6,12 @@ pub const SELELCT_POST_BY_ID: &'static str = "SELECT created, id, is_edited, mes
 pub const INSERT_POST: &'static str = "INSERT INTO post(id, parent_id, author_id, created, forum_slug, message, thread_id, id_of_root)\
 VALUES($1, $2, $3, $4, $5::CITEXT, $6, $7, $8)";
 
+pub const GET_PARENT_DATA: &'static str = "SELECT thread_id FROM posts WHERE id = $1";
+
+// maybe forum_id
+pub const INSERT_POST_BIG: &'static str = "INSERT INTO post(id, parent_id, author_id author_name, forum_slug, created, message, thread_id, id_of_root)\
+VALUES($1, $2, $3, $4::CITEXT, $5::CITEXT, $6, $7, $8)";
+
 //id SERIAL PRIMARY KEY,
 //parent_id    INTEGER     DEFAULT 0,
 //author_id   INTEGER REFERENCES userprofiles (id) ON DELETE CASCADE   NOT NULL,
