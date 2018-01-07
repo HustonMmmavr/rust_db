@@ -123,8 +123,11 @@ extern crate streaming_iterator;
 
 //
 fn main() {
-
-    let mut uri = "postgres://mavr:951103@localhost/test1";
+//    let mut v: Vec<_> = Vec::new();
+//    v.push(5);
+//    v.push("sa".to_string());
+//    print!("{}", v);
+    let mut uri = "postgres://comp:951103@localhost/test1";
     let mut router = Router::new();           // Alternative syntax:
     fill_route(&mut router);
     let mut chain = Chain::new(router);

@@ -90,7 +90,7 @@ pub fn get_users(slug: &str, conn: &PostgresConnection) -> Result<Vec<User>, i32
     return Ok(users);
 }
 
-pub
+//pub
 
 
 pub fn get_threads() {

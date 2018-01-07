@@ -87,7 +87,7 @@ pub fn get_forum(request : &mut Request) -> IronResult<Response> {
         }
     }
 }
-
+use params;
 pub fn create_thread(request : &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
 
@@ -106,6 +106,7 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
         _ => panic!("No body")
     }
 
+    println!("{:?}", dbThread);
     match t_m::create_thread(&mut dbThread, &conn) {
         Ok(val) => {
             resp.set_mut(JsonResponse::json(val)).set_mut(status::Created);
@@ -117,6 +118,7 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
                 return Ok(resp);
             }
             else {
+
                 let slugg = dbThread.slug.unwrap().to_string();
                 let existing_thread = t_m::get_thread_by_slug(&slugg, &conn).unwrap();
                 resp.set_mut(JsonResponse::json(existing_thread)).set_mut(status::Conflict);
@@ -130,17 +132,39 @@ pub fn get_threads(request : &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
     let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
 //    }
-    let conn = db_pool.get();
+    let conn = db_pool.get().unwrap();
     let data = request.get::<Params>();
-    let slug = request.extensions.get::<Router>().unwrap().find("slug_or_id");
+    let slug = request.extensions.get::<Router>().unwrap().find("slug_or_id").unwrap();
     println!("{:?}", data);
 //    match
 //        request.get_ref::<Params>() {
 //        Ok(map) => {
     let map = data.unwrap();
-    let limit = map.find(&["limit"]);
-    let desc = map.find(&["desc"]);
-    let since = map.find(&["since"]);
+    let mut limit = -1;
+    match map.find(&["limit"]) {
+        Some(val) =>
+            limit =  params::FromValue::from_value(val).unwrap(),
+//            limit = serde_json::from_str(&str).unwrap()
+
+        None => {}
+    }
+    println!("{}", limit);
+//    let limit = map.find(&["limit"]);
+    let mut desc = false;
+    match map.find(&["desc"]) {
+        Some(val) =>
+            desc = params::FromValue::from_value(val).unwrap(),
+//            desc = serde_json::from_str(&val.unwrap())
+        None => {}
+    }
+
+    let mut since = String::new();
+    match map.find(&["since"]) {
+        Some(val) => since = params::FromValue::from_value(val).unwrap(),
+        None => {}
+    }
+//    let desc = map.find(&["desc"]);
+//    let since = map.find(&["since"]);
 
 
 
@@ -149,7 +173,9 @@ pub fn get_threads(request : &mut Request) -> IronResult<Response> {
 
         }
         Err(err) => {
-
+//            if err = 404 {
+//                re
+//            }
         }
     }
 //            limit = l;

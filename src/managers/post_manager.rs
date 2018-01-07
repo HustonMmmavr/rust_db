@@ -101,7 +101,7 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresC
     let mut data: Vec<Box<ToSql>> = vec![];
 
     for db_post in db_posts {
-        data.push(Box:ntkthhfvvf:new(db_post.id as i32));
+        data.push(Box::new(db_post.id as i32));
         data.push(Box::new(db_post.parent));
         data.push(Box::new(db_post.author_id));
         data.push(Box::new(db_post.author_name));

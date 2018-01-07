@@ -17,6 +17,8 @@ use chrono::prelude::*;
 use time::Duration;
 use std::str::FromStr;
 use queries::thread::*;
+use queries::forum::*;
+use serde_json;
 
 pub struct TimeTZ {
     t: Option<DateTime<Utc>>
@@ -46,7 +48,7 @@ pub fn create_thread(thread: &mut Thread, conn: &PostgresConnection) -> Result<T
             return Ok(thread);
         }
         Err(e) => {
-//            println!("{:?}", e);
+            println!("{:?}", e);
             let code = e.code().unwrap().code();
             if code == "23502" {
                 return Err(404);
@@ -82,31 +84,102 @@ pub fn get_thread_by_slug(slug: &String, conn: &PostgresConnection ) -> Result<T
     return Ok(thread);
 }
 
-pub fn get_threads(slug: &str, limit: &Option<String>, desc: &Option<String>, since: &Option<String>,
+pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
     conn: &PostgresConnection) -> Result<Vec<Thread>, i32> {
-    let query = String::new();
-    let args: Vec<String> = Vec::new();
-    let counter: i32 = 1;
+    let forum_query = conn.query(GET_FORUM_ID, &[&slug]).unwrap();
+    if forum_query.len() == 0 {
+        return Err(404);
+    }
+
+    let mut f_id = 0;
+    for row in &forum_query {
+        f_id = row.get(0);//"id")
+    }
+
+    let mut query = String::new();
+//    let args: Vec<Box> Vec::new();
+    let mut counter: i32 = 1;
+
+//    let mut desc = false;
+//    match _desc {
+//        &Some(val) => desc = serde_json::from_str(&val).unwrap(),
+//        &None => {}
+//    }
+
+//    let
+
+    let mut args = Vec::<Box<ToSql>>::new();
+//    values.push(Box::new(sensor_id));
+//    values.push(Box::new(datetime));
+
+//    let f_id: i32 = 0;
     query.push_str(SEARCH_THREAD);
     query += &format!("forum_id = ${} ", counter);
+    counter+=1;
+    args.push(Box::new(f_id));
+    let mut created: chrono::DateTime<Utc>;
+    if since.len() > 0 {
+        query += "AND created ";
+        query += if desc == true  {"<= "} else {">= "};
+        query += &format!("${}::TIMESTAMPTZ ", counter);
+        counter+=1;
+//        } else {"=> ?::TIMESTAMPTZ "};
+        created = chrono::DateTime::<Utc>::from_str(&since).unwrap();
+        args.push(Box::new(created));
+    }
+//    match since {
+//        &Some(val) => {
+//            query += "AND created ";
+//            query += if desc == true  {"<= "} else {">= "};
+//            query += &format!("${}::TIMESTAMPTZ ", counter);
+//            counter+=1;
+////        } else {"=> ?::TIMESTAMPTZ "};
+//            created = chrono::DateTime::<Utc>::from_str(&val).unwrap();
+//            args.push(Box::new(created));
+//        }
+//        &None => {}
+//    }
 
-    match since {
-        Ok(val) => {
-            query += "AND created "
-        }
+    query += "ORDER BY created ";
+    query += if desc == true {"DESC "} else {" "};
 
+    if limit > 0 {
+        query += &format!("LIMIT ${}", counter);
+        args.push(Box::new(limit));
+        counter += 1;
     }
 
-    match limit {
-        Ok() => {
-            query += &format()
-        },
-        Err(_)
+//    let mut lim: i32 = 0;
+//    query += "ORDER BY created ";
+//    query += if desc == true {"DESC "} else {" "};
+//    match limit {
+//        &Some(val) => {
+//            query += &format!("LIMIT ${}", counter);
+//            lim = serde_json::from_str(&val).unwrap();
+//            args.push(Box::new(lim));
+//            counter += 1;
+//        },
+//        &None => {}
+//    }
+
+    let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();//args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
+    let query_rows = conn.query(&query, &binds_borrowed).unwrap();
+    if query_rows.len() == 0 {
+        return Err(404);
     }
 
-    let created: chrono::DateTime<Utc>;
-    match since {
-        Ok(val) => created =
+    let mut threads: Vec<Thread> = Vec::new();
+    for row in &query_rows {
+        let mut thread: Thread = empty_thread();
+        read_thread(&mut thread, row);
+        threads.push(thread);
     }
-    match
+    return Ok(threads);
 }
+
+
+//    let mut created: chrono::DateTime<Utc>;
+//    match since {
+//        Some(val) => //created =
+//    }
+//    match
