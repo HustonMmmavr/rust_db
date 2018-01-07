@@ -63,12 +63,13 @@ fn fill_route(router: &mut Router) {
 //fn main() {
 //    let conn = Connection::connect("postgres://mavr:951103@localhost:5432/test", TlsMode::None).unwrap();
 //    let conn = Connection::connect("postgres://mavr:951103@localhost:5432/test", TlsMode::None).unwrap();
+//    conn.prepare("IN");
 ////    conn.execute("CREATE TABLE person (
 ////                    id              SERIAL PRIMARY KEY,
 ////                    name            VARCHAR NOT NULL,
 ////                    data            BYTEA
 ////                  )", &[]).unwrap();
-//    let me = Person {
+//}
 //        id: 0,
 //        name: "Steven".to_string(),
 //        data: None,
@@ -89,8 +90,8 @@ fn fill_route(router: &mut Router) {
 //}
 
 //extern crate postgres;
-//extern crate postgres_binary_copy;
-//extern crate streaming_iterator;
+extern crate postgres_binary_copy;
+extern crate streaming_iterator;
 //
 //use postgres::{Connection, TlsMode};
 //use postgres::types::{ToSql, INT4, VARCHAR, TIMESTAMPTZ, };
@@ -118,52 +119,6 @@ fn fill_route(router: &mut Router) {
 //
 ////    let stmt = conn.prepare("COPY aa (id, bar) FROM STDIN (FORMAT binary)").unwrap();
 ////    stmt.copy_in(&[], &mut reader).unwrap();
-//}
-
-
-
-//use serde_json::{Value, Error};
-//
-//#[derive(Serialize, Deserialize, Debug)]
-//struct Person {
-//    name: String,
-//    age: u8,
-//    phones: Vec<String>,
-//}
-//
-//fn untyped_example() -> Result<(), Error> {
-//    // Some JSON input data as a &str. Maybe this comes from the user.
-//    let data = r#"[{
-//                    "name": "John Doe",
-//                    "age": 43,
-//                    "phones": [
-//                      "+44 1234567",
-//                      "+44 2345678"
-//                    ]
-//                  },
-//                  {
-//                    "name": "John",
-//                    "age": 43,
-//                    "phones": [
-//                      "+44 1234567",
-//                      "+44 2345678"
-//                    ]
-//                  }
-//
-//                  ]"#;
-//
-//    // Parse the string of data into serde_json::Value.
-//    let v: Vec::<Person> = serde_json::from_str(data)?;
-////    let s: Person = v.get(1).unwrap();
-//    println!("{:?}", v);
-//    // Access parts of the data by indexing with square brackets.
-////    println!("Please call {} at the number {}", v["name"], v["phones"][0]);
-//
-//    Ok(())
-//}
-
-//fn main() {
-//    untyped_example().unwrap();
 //}
 
 //

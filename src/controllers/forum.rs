@@ -128,7 +128,38 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
 
 pub fn get_threads(request : &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
+    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
+//    }
+    let conn = db_pool.get();
+    let data = request.get::<Params>();
+    let slug = request.extensions.get::<Router>().unwrap().find("slug_or_id");
+    println!("{:?}", data);
+//    match
+//        request.get_ref::<Params>() {
+//        Ok(map) => {
+    let map = data.unwrap();
+    let limit = map.find(&["limit"]);
+    let desc = map.find(&["desc"]);
+    let since = map.find(&["since"]);
 
+
+
+    match t_m::get_threads(slug, limit, desc, since, &conn) {
+        Ok(val) => {
+
+        }
+        Err(err) => {
+
+        }
+    }
+//            limit = l;
+//            println!("{:?}", l);
+//            limit =l;// [);
+//            desc = d;//map.find();
+//            since = s;//map.find("since");
+//        },
+//        Err(_) => {}
+//    }
 //    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
 //    let conn = db_pool.get().unwrap();
 //
@@ -155,3 +186,24 @@ pub fn get_users(request : &mut Request) -> IronResult<Response> {
     resp.set_mut(JsonResponse::json(ErrorMsg{message: "err"})).set_mut(status::Conflict);
     return Ok(resp);
 }
+
+//    let limit;
+//    let desc;
+//    let since;
+
+
+//    println!("{}", limit);
+
+//    match request.get_ref::<Params>() {
+//        Ok(map) => {
+//            limit = map.find(&["limit"]).clone();
+//            desc = map.find(&["desc"]).clone();
+//            since = map.find(&["since"]).clone();
+//            println!("{:?}", limit);
+//            println!("{:?}", desc);
+//            println!("{:?}", since);
+////            limit =l;// [);
+////            desc = d;//map.find();
+////            since = s;//map.find("since");
+//        },
+//        Err(_) => {}

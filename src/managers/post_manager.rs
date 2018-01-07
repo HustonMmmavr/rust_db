@@ -4,7 +4,6 @@ use queries::thread as t_q;
 use models::thread::*;
 use models::forum::*;
 use models::user::*;
-use postgres::types::ToSql;
 use db::{PostgresConnection};
 use std;
 use postgres;
@@ -20,18 +19,24 @@ use models::post::*;
 use managers::user_manager::*;
 use queries::post::*;
 
+use postgres_binary_copy;
+use streaming_iterator;
+use postgres_binary_copy::BinaryCopyReader;
+use streaming_iterator::StreamingIterator;
+use postgres::types::{ToSql, INT4, VARCHAR, TIMESTAMPTZ, INT4_ARRAY, TEXT };
+use managers::forum_manager as f_m;
+use queries::forum::*;
 pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresConnection) -> Result<Vec<Post>, i32> {
     let created: chrono::DateTime<Utc> = Utc::now();
     let mut posts: Vec<Post> = Vec::new();
 
+    let mut db_posts: Vec<DbPost> = Vec::new();
 //    let stmt = conn.prepare(INSERT_POST_BIG).unwrap();
-
     for json_post in json_posts {
         let mut post: Post;
         let forum: String = thread.forum.to_string();
         let u_id;
         let u_name;
-        println!("{:?}", json_post);
         match  find_user_id_and_nick(&json_post.author.unwrap(), &conn) {
             Ok(val) => {
                 let (name, id) = val;
@@ -48,13 +53,26 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresC
             p_id = row.get(0);
         }
 
-        let post = empty_post();
-        if json_post.parent == None || json_post.parent == Some(0) {
-            let pst = Post{ id: p_id, author: u_name.to_string(),
-            message: json_post.message.unwrap().to_string(), forum: thread.forum.to_string(), thread: thread.id,
+        let mut f_id:i32 = 0;
+        let query = conn.query(GET_FORUM_ID, &[&thread.forum]).unwrap();
+
+        for row in &query {
+            f_id = row.get("id");
+        }
+
+        let message = json_post.message.unwrap();
+
+        let mut pst = Post{ id: p_id, author: u_name.clone(),
+            message: message.clone(), forum: thread.forum.to_string(), thread: thread.id,
             parent: 0, created: format!{"{:?}", created }, isEdited: false
-            };
-            posts.push(pst);
+        };
+
+        let mut dbPst = DbPost { id: p_id, author_id: u_id, author_name: u_name.clone(),
+            message: message.clone(), forum_id: f_id, forum_slug: thread.forum.to_string(), thread: thread.id,
+            parent: 0, created: created
+        };
+
+        if json_post.parent == None || json_post.parent == Some(0) {
         } else {
             let mut parent_thread_id: i32 = 0;
             let query = conn.query(GET_PARENT_DATA, &[&json_post.parent]).unwrap();
@@ -68,8 +86,71 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresC
             if parent_thread_id != thread.id {
                 return Err(409)
             }
+
+            let parent = json_post.parent.unwrap();
+            pst.set_parent(&parent);
+            dbPst.set_parent(&parent);
+
         }
+
+        posts.push(pst);
+        db_posts.push(dbPst);
     }
+
+    let types = &[INT4, INT4, INT4, TEXT, INT4, TEXT, TIMESTAMPTZ, TEXT, INT4];
+    let mut data: Vec<Box<ToSql>> = vec![];
+
+    for db_post in db_posts {
+        data.push(Box:ntkthhfvvf:new(db_post.id as i32));
+        data.push(Box::new(db_post.parent));
+        data.push(Box::new(db_post.author_id));
+        data.push(Box::new(db_post.author_name));
+        data.push(Box::new(db_post.forum_id));
+        data.push(Box::new(db_post.forum_slug));
+        data.push(Box::new(db_post.created));
+        data.push(Box::new(db_post.message));
+        data.push(Box::new(db_post.thread));
+    }
+
+    let data = streaming_iterator::convert(data.into_iter()).map_ref(|v| &**v);
+    let mut reader = BinaryCopyReader::new(types, data);
+    let stmt = conn.prepare(COPY_POSTS).unwrap();
+    stmt.copy_in(&[], &mut reader).unwrap();
 
     return Ok(posts);
 }
+//        println!("{:?}", json_post);
+//        println!("{:?}", query);
+
+//    let tran = conn.transaction().unwrap();
+//    let stmt = tran.prepare(INSERT_POST_BIG).unwrap();
+//    for post in db_posts {
+//
+//    }
+
+//    let data: Vec<Box<ToSql>> = vec![Box::new(3i32), Box::new("hello"),
+//                                     Box::new(4i32), Box::new("world")];
+//    print!("{:?}", data);
+
+
+//        println!("forum{}", thread.forum);
+//        println!("forum{}", f_id);
+
+
+//    let f: postgres_array::Array<i32> = postgres_array::Array::from_vec(da, 1);
+//    println!("{:?}", f);
+//    let post
+
+//    pub const INSERT_POST_BIG: &'static str = "INSERT INTO posts(id, parent_id, author_id, author_name, forum_slug, created, message, thread_id)\
+//VALUES($1, $2, $3, $4::CITEXT, $5::CITEXT, $6, $7, $8)";
+
+
+//            pst = Post{ id: p_id, author: u_name.clone(),
+//            message: message.clone(), forum: thread.forum.to_string(), thread: thread.id,
+//            parent: 0, created: format!{"{:?}", created }, isEdited: false
+//            };
+
+//            dbPst = DbPost { id: p_id, author_id: u_id, author_name: u_name.clone(),
+//                message: message.clone(), forum_id: f_id, forum_slug: thread.forum.to_string(), thread: thread.id,
+//                parent: 0, created: created
+//            };

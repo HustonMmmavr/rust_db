@@ -16,6 +16,7 @@ use time;
 use chrono::prelude::*;
 use time::Duration;
 use std::str::FromStr;
+use queries::thread::*;
 
 pub struct TimeTZ {
     t: Option<DateTime<Utc>>
@@ -79,4 +80,33 @@ pub fn get_thread_by_slug(slug: &String, conn: &PostgresConnection ) -> Result<T
         read_thread(&mut thread, row);
     }
     return Ok(thread);
+}
+
+pub fn get_threads(slug: &str, limit: &Option<String>, desc: &Option<String>, since: &Option<String>,
+    conn: &PostgresConnection) -> Result<Vec<Thread>, i32> {
+    let query = String::new();
+    let args: Vec<String> = Vec::new();
+    let counter: i32 = 1;
+    query.push_str(SEARCH_THREAD);
+    query += &format!("forum_id = ${} ", counter);
+
+    match since {
+        Ok(val) => {
+            query += "AND created "
+        }
+
+    }
+
+    match limit {
+        Ok() => {
+            query += &format()
+        },
+        Err(_)
+    }
+
+    let created: chrono::DateTime<Utc>;
+    match since {
+        Ok(val) => created =
+    }
+    match
 }

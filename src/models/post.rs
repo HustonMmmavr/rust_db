@@ -6,11 +6,8 @@ use chrono;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct JsonPost {
-//    pub title: Option<String>,
     pub author: Option<String>,
     pub message: Option<String>,
-//    pub forum: String,
-//    pub thread: i32,
     pub parent: Option<i32>,
 }
 
@@ -21,7 +18,7 @@ impl JsonPost {
 }
 
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub struct Post {
 //    pub title: String,
     pub id: i64,
@@ -38,16 +35,28 @@ pub struct Post {
 
 //use chrono::DateTime;
 pub struct DbPost {
-    pub title: String,
-    pub author: i32,
+    pub id: i64,
+    pub author_id: i32,
+    pub author_name: String,
     pub message: String,
-    pub forum: String,
+    pub forum_slug: String,
+    pub forum_id: i32,
     pub thread: i32,
     pub parent: i32,
     pub created: chrono::DateTime<chrono::Utc>,
 }
 
+impl Post {
+    pub fn set_parent(&mut self, parent: &i32) {
+        self.parent = parent.clone();
+    }
+}
 
+impl DbPost {
+    pub fn set_parent(&mut self, &parent: &i32) {
+        self.parent = parent.clone();
+    }
+}
 
 pub fn empty_post () -> Post {
     return Post{ id:0, author: String::new(),

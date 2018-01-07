@@ -82,16 +82,15 @@ pub fn get_users(slug: &str, conn: &PostgresConnection) -> Result<Vec<User>, i32
     }
 
     let mut forum = empty_forum();
-//    for row in &query {
-//        forum.id = row.get("id");
-//        read_forum(&mut forum, row);
-//    }
+//
+
 
     let users: Vec<User> = Vec::new();
     println!("{:?}", forum);
     return Ok(users);
 }
 
+pub
 
 
 pub fn get_threads() {

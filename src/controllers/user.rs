@@ -186,5 +186,4 @@ pub fn count_user(request : &mut Request) -> IronResult<Response> {
 
 fn clear_user(request : &mut Request) -> IronResult<Response> {
     return Ok(Response::with((iron::status::Ok, "Hello World")));
-
 }
