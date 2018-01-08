@@ -91,7 +91,7 @@ pub fn get_thread_(request : &mut Request) -> IronResult<Response> {
 //    let raw = request.get::<bodyparser::Raw>().unwrap().unwrap();
     let slug_or_id = request.extensions.get::<Router>().unwrap().find("slug_or_id").unwrap_or("/");
 
-//    let mut thread_option;
+//    let mut thread_option;2
     match from_str::<i32>(slug_or_id) {
         Ok(val) => {
             match get_thread(&val, &conn) {
@@ -118,8 +118,10 @@ pub fn get_thread_(request : &mut Request) -> IronResult<Response> {
     return Ok(resp);
 }
 
-pub fn get_posts() {
+pub fn get_posts(request: &mut Request) -> IronResult<Response> {
+    let mut resp = Response::new();
 
+    return Ok(resp);
 }
 
 pub fn update_thread_(request: &mut Request) -> IronResult<Response> {

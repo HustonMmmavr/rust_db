@@ -120,6 +120,10 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresC
     return Ok(posts);
 }
 
+pub fn get_post(id: i32, related: , conn: &PostgresConnection) -> Result<{
+
+}
+
 pub fn count(conn: &PostgresConnection) -> i32 {
     let query = conn.query("SELECT COUNT(*) FROM posts",  &[]).unwrap();
     let mut cnt: i32 = 0;

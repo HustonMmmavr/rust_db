@@ -48,8 +48,14 @@ fn fill_route(router: &mut Router) {
     router.get("/api/thread/:slug_or_id/details", controllers::thread::get_thread_, "get_thread");
     router.post("/api/thread/:slug_or_id/details", controllers::thread::update_thread_, "update_thread");
     router.post("/api/thread/:slug_or_id/vote", controllers::thread::vote_, "vote");
+    router.get("/api/thread/:slug_or_id/posts", controllers::thread::get_posts, "get_posts");
+
+    router.get("/api/post/:id/details", controllers::post::get_post_details, "get_post");
+    router.post("/api/post/:id/details", controllers::post::set_post_details, "set_post");
 
     router.post("/api/service/clear", controllers::service::clear, "clear");
+    router.get("/api/service/status", controllers::service::status, "status");
+
 
 //    router.get("/api/forum/:slug/threads", controllers::forum::get_threads, "get_threads");
 

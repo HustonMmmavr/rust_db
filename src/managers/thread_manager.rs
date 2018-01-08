@@ -317,8 +317,6 @@ pub fn vote(vote_mod: Vote, slug: String, conn: &PostgresConnection) -> Result<T
         }
         Err(_) => return Err(404)
     }
-
-
     return Err(404);
 }
 

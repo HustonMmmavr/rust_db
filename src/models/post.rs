@@ -46,6 +46,18 @@ pub struct DbPost {
     pub created: chrono::DateTime<chrono::Utc>,
 }
 
+use user::{ User};
+use forum::{ Forum};
+use thread::{ Thread};
+
+#[derive(Serialize, Debug, Clone)]
+pub struct PostDetails {
+    pub user: Option<User>,
+    pub forum: Option<Forum>,
+    pub thread: Option<Thread>,
+    pub post: Option<Post>
+}
+
 impl Post {
     pub fn set_parent(&mut self, parent: &i32) {
         self.parent = parent.clone();

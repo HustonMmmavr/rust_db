@@ -4,3 +4,4 @@ pub mod forum;
 pub mod thread;
 pub mod post;
 pub mod vote;
+pub mod status;
