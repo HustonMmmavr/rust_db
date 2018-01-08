@@ -107,8 +107,8 @@ CREATE OR REPLACE FUNCTION create_thread(u_name citext, created timestamptz, f_s
     u_nickname citext;
 --     date TIMESTAMPTZ;
   BEGIN
-      select id, nicknmae  from userprofiles where nickname = u_name into u_id, u_nickname;
-      select id from forums where slug = f_slug into f_id, forum_slug;
+      select id, nickname from userprofiles where nickname = u_name into u_id, u_nickname;
+      select id, slug from forums where slug = f_slug into f_id, forum_slug;
       if created is null then
         created = NOW();
       end if;
@@ -120,7 +120,7 @@ CREATE OR REPLACE FUNCTION create_thread(u_name citext, created timestamptz, f_s
    END;'
 LANGUAGE plpgsql;
 
---------------------- TRIGGER FOR UPDATE forums ------------------------
+--------------------- TRIGGER FOR UPDAT..E forums ------------------------
 CREATE OR REPLACE FUNCTION insert_forum_func() RETURNS TRIGGER AS
 $insert_forums_trigger$
   BEGIN
@@ -139,7 +139,7 @@ CREATE TRIGGER insert_forums_trigger AFTER INSERT ON forums
 
 ------------------- TRIGGER FOR UPDATE threads ---------------
 
-CREATE OR REPLACE FUNCTION insert_threads_func() RETURNS TRIGGER AS
+/*CREATE OR REPLACE FUNCTION insert_threads_func() RETURNS TRIGGER AS
 $insert_threads_trigger$
   BEGIN
       UPDATE threads SET author_name = (SELECT nickname FROM userprofiles WHERE id = NEW.author_id),
@@ -153,7 +153,7 @@ $insert_threads_trigger$ LANGUAGE plpgsql;
 
 DROP TRIGGER IF EXISTS insert_threads_trigger ON threads;
 CREATE TRIGGER insert_threads_trigger AFTER INSERT ON threads
-  FOR EACH ROW EXECUTE PROCEDURE insert_threads_func();
+  FOR EACH ROW EXECUTE PROCEDURE insert_threads_func();*/
 
 -------------------------------------------------------------------
 
@@ -163,8 +163,9 @@ CREATE TRIGGER insert_threads_trigger AFTER INSERT ON threads
 CREATE OR REPLACE FUNCTION insert_posts_func() RETURNS TRIGGER AS
 $insert_posts_trigger$
   BEGIN
-      UPDATE posts SET forum_ = (SELECT slug FROM forums WHERE id = NEW.forum_id)
-      WHERE id = NEW.id;
+--       UPDATE posts SET forum_ = (SELECT slug FROM forums WHERE id = NEW.forum_id)
+--       WHERE id = NEW.id;
+      UPDATE forums set posts = posts + 1 WHERE id = NEW.forum_id;
       INSERT INTO forums_and_users(user_id, forum_id) VALUES(NEW.author_id, NEW.forum_id);
     RETURN NULL;
   END;

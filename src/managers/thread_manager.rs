@@ -126,6 +126,7 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
         counter += 1;
     }
 
+
     let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();//args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
     let query_rows = conn.query(&query, &binds_borrowed).unwrap();
     let mut threads: Vec<Thread> = Vec::new();

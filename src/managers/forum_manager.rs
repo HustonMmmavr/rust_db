@@ -3,6 +3,9 @@ use queries::user as u_q;
 use models::forum::*;
 use db::{PostgresConnection};
 use models::user::{User, read_user};
+use queries::forum::*;
+use postgres::types::{ToSql};
+use models::user::*;
 pub fn create_forum(forum: & Forum, conn: &PostgresConnection) -> Result<Forum, i32>  {
     let query = conn.query(u_q::get_user_id, &[&forum.user]).unwrap();
     if (query.len() == 0) {
@@ -76,41 +79,32 @@ pub fn get_forum(slug: &str, conn: &PostgresConnection)  -> Result<Forum, i32> {
 //end
 
 pub fn get_users(slug: &str, limit: i32, desc: bool, since: String, conn: &PostgresConnection) -> Result<Vec<User>, i32> {
-    let query = conn.query(f_q::get_forum, &[&slug]).unwrap();
-    if (query.len() == 0) {
-        return Err(404);
-    }
-
     let forum_query = conn.query(GET_FORUM_ID, &[&slug]).unwrap();
     if forum_query.len() == 0 {
         return Err(404);
     }
 
+
     let mut f_id:i32  = 0;
     for row in &forum_query {
         f_id = row.get(0);//"id")
     }
-
-    let mut query = String::new();
-    let mut counter: i32 = 1;
+//
+    let mut query = GET_USERS.to_string();
+    let mut counter: i32 = 2;
 
     let mut args = Vec::<Box<ToSql>>::new();
-    query.push_str(SEARCH_THREAD);
-    query += &format!(" WHERE forum_id = ${} ", counter);
-    counter+=1;
     args.push(Box::new(f_id));
-    let mut created: chrono::DateTime<Utc>;
+
     if since.len() > 0 {
-        query += "AND created ";
-        query += if desc == true  {"<= "} else {">= "};
-        query += &format!("${}::TIMESTAMPTZ ", counter);
+        query += "AND _user.nickname ";
+        query += if desc == true  {"< "} else {"> "};
+        query += &format!("${}::CITEXT ", counter);
         counter+=1;
-//        } else {"=> ?::TIMESTAMPTZ "};
-        created = chrono::DateTime::<Utc>::from_str(&since).unwrap();
-        args.push(Box::new(created));
+        args.push(Box::new(since));
     }
 
-    query += "ORDER BY created ";
+    query += "ORDER BY _user.nickname ";
     query += if desc == true {"DESC "} else {" "};
     let mut lim: i64 = 0;
     if limit > 0 {
@@ -120,15 +114,16 @@ pub fn get_users(slug: &str, limit: i32, desc: bool, since: String, conn: &Postg
         counter += 1;
     }
 
+//    println!("{}", query);
+
     let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();//args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
     let query_rows = conn.query(&query, &binds_borrowed).unwrap();
-    let mut threads: Vec<Thread> = Vec::new();
+
+    let mut users: Vec<User> = vec![];
     for row in &query_rows {
-        let mut thread: Thread = empty_thread();
-        read_thread(&mut thread, row);
-        threads.push(thread);
+        let mut user = read_user(&row);
+        users.push(user);
     }
-    return Ok(threads);
     return Ok(users);
 }
 

@@ -106,7 +106,7 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
         _ => panic!("No body")
     }
 
-    println!("{:?}", dbThread);
+//    println!("{:?}", dbThread);
     match t_m::create_thread(&mut dbThread, &conn) {
         Ok(val) => {
             resp.set_mut(JsonResponse::json(val)).set_mut(status::Created);
@@ -205,11 +205,16 @@ pub fn get_users(request : &mut Request) -> IronResult<Response> {
     }
 
     match f_m::get_users(slug, limit, desc, since, &conn) {
-        Ok(val) => println!("{:?}", val),
-        Err(_) => println!("nnn")
+        Ok(val) => {
+            resp.set_mut(JsonResponse::json(val)).set_mut(status::Ok);
+            return Ok(resp);
+        },
+        Err(_) => {
+            resp.set_mut(JsonResponse::json(ErrorMsg{message: "err"})).set_mut(status::NotFound);
+            return Ok(resp);
+        }
     }
-    resp.set_mut(JsonResponse::json(ErrorMsg{message: "err"})).set_mut(status::Conflict);
-    return Ok(resp);
+//    return Ok(resp);
 }
 
 //    let limit;
