@@ -47,6 +47,7 @@ fn fill_route(router: &mut Router) {
     router.post("/api/thread/:slug_or_id/create", controllers::thread::create_posts, "create_posts");
     router.get("/api/thread/:slug_or_id/details", controllers::thread::get_thread_, "get_thread");
     router.post("/api/thread/:slug_or_id/details", controllers::thread::update_thread_, "update_thread");
+    router.post("/api/thread/:slug_or_id/vote", controllers::thread::vote_, "update_thread");
 
 //    router.get("/api/forum/:slug/threads", controllers::forum::get_threads, "get_threads");
 

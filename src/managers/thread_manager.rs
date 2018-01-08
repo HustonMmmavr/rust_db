@@ -21,7 +21,7 @@ use queries::forum::*;
 use serde_json;
 use postgres::types::{INT4, TIMESTAMPTZ};
 use serde_json::from_str;
-
+use models::vote::*;
 pub struct TimeTZ {
     t: Option<DateTime<Utc>>
 }
@@ -206,40 +206,10 @@ pub fn update_thread(slug: &String, json_thread: &JsonThreadUpdate, conn: &Postg
 }
 
 
-//    if (threadModel.getMessage() != null) {
-//        builder.append(" message = ?,");
-//        args.add(threadModel.getMessage());
-//    }
-//
-//    if (threadModel.getTitle() != null) {
-//        builder.append(" title = ?,");
-//        args.add(threadModel.getTitle());
-//    }
-//
-//    if (!args.isEmpty()) {
-//        builder.delete(builder.length() - 1, builder.length());
-//        if (threadModel.getId() != null) {
-//            builder.append(" WHERE id = ?");
-//            args.add(threadModel.getId());
-//        }
-//            else {
-//                builder.append(" WHERE slug = ?::CITEXT");
-//                args.add(threadModel.getSlug());
-//            }
-//        jdbcTemplate.update(builder.toString(), args.toArray());
-//    }
-//        match from_str::<i32>(slug) {
-//            Ok(val) => {
-//                id = val;
-//                args.push(Box::new(id));
-//                result += &format!(" WHERE id = ${} ", counter);
-//            }
-//            Err(e) => {
-//                id = -1;
-//                args.push(Box::new(slug.to_string()));
-//                result += &format!(" WHERE slug = ${}::CITEXT ", counter);
-//            }
-//        }
+pub fn vote(vote_mod: Vote, slug: String, conn: &PostgresConnection) -> Result<Thread, i32> {
+    return Err(404);
+}
+
 
 pub fn count(conn: &PostgresConnection) -> i32 {
     let query = conn.query("SELECT COUNT(*) FROM threads", &[]).unwrap();

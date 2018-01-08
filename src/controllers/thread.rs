@@ -33,6 +33,7 @@ use managers::post_manager as p_m;
 use managers::post_manager::*;
 use managers::user_manager::*;
 use queries::post::*;
+use models::vote::*;
 
 
 pub fn create_posts(request : &mut Request) -> IronResult<Response> {
@@ -140,4 +141,22 @@ pub fn update_thread_(request: &mut Request) -> IronResult<Response> {
         }
 
     }
+}
+
+pub fn vote_ (request: &mut Request) -> IronResult<Response> {
+    let mut resp = Response::new();
+
+    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
+    let conn = db_pool.get().unwrap();
+    let json_vote = request.get::<bodyparser::Struct<Vote>>().unwrap().unwrap();
+    let slug_or_id = request.extensions.get::<Router>().unwrap().find("slug_or_id").unwrap().to_string();
+
+    match vote(json_vote, slug_or_id, &conn) {
+        Ok(val) => {
+
+        }
+        Err(e) => {}
+    }
+
+    return Ok(resp);
 }
