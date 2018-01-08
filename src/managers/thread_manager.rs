@@ -19,6 +19,7 @@ use std::str::FromStr;
 use queries::thread::*;
 use queries::forum::*;
 use serde_json;
+use postgres::types::{INT4, TIMESTAMPTZ};
 
 pub struct TimeTZ {
     t: Option<DateTime<Utc>>
@@ -48,7 +49,7 @@ pub fn create_thread(thread: &mut Thread, conn: &PostgresConnection) -> Result<T
             return Ok(thread);
         }
         Err(e) => {
-            println!("{:?}", e);
+//            println!("{:?}", e);
             let code = e.code().unwrap().code();
             if code == "23502" {
                 return Err(404);
@@ -84,6 +85,14 @@ pub fn get_thread_by_slug(slug: &String, conn: &PostgresConnection ) -> Result<T
     return Ok(thread);
 }
 
+//fn print_type_of<T>(_: &T) {
+//    println!("{}", unsafe { std::intrinsics::type_name::<T>() });
+//}
+
+//    let forum_id: INT4 = f_id;
+
+//    let mut args: Vec<&str> = Vec::new();
+
 pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
     conn: &PostgresConnection) -> Result<Vec<Thread>, i32> {
     let forum_query = conn.query(GET_FORUM_ID, &[&slug]).unwrap();
@@ -91,7 +100,7 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
         return Err(404);
     }
 
-    let mut f_id = 0;
+    let mut f_id:i32  = 0;
     for row in &forum_query {
         f_id = row.get(0);//"id")
     }
@@ -114,7 +123,7 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
 
 //    let f_id: i32 = 0;
     query.push_str(SEARCH_THREAD);
-    query += &format!("forum_id = ${} ", counter);
+    query += &format!(" WHERE forum_id = ${} ", counter);
     counter+=1;
     args.push(Box::new(f_id));
     let mut created: chrono::DateTime<Utc>;
@@ -142,10 +151,11 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
 
     query += "ORDER BY created ";
     query += if desc == true {"DESC "} else {" "};
-
+    let mut lim: i64 = 0;
     if limit > 0 {
         query += &format!("LIMIT ${}", counter);
-        args.push(Box::new(limit));
+        lim = limit as i64;
+        args.push(Box::new(lim));
         counter += 1;
     }
 
@@ -162,12 +172,25 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
 //        &None => {}
 //    }
 
-    let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();//args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
-    let query_rows = conn.query(&query, &binds_borrowed).unwrap();
-    if query_rows.len() == 0 {
-        return Err(404);
-    }
+//    println!("{}", query);
+//    for arg in &args {
+//        print_type_of(arg);
+//    }
 
+    let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();//args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
+//    println!("{:?}", binds_borrowed);
+//    println!("{}", query);
+    let query_rows = conn.query(&query, &binds_borrowed).unwrap();
+//    let binds_borrowed = args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
+//    println!("{}", query);
+//    match conn.query(&query, &[&2000i32, &4i64]) {
+//        Ok(_) => {}
+//        Err(e) => println!("{:?}", e)
+//    }
+//    if query_rows.len() == 0 {
+//        return Err(404);
+//    }
+//
     let mut threads: Vec<Thread> = Vec::new();
     for row in &query_rows {
         let mut thread: Thread = empty_thread();

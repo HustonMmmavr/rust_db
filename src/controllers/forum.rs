@@ -134,27 +134,21 @@ pub fn get_threads(request : &mut Request) -> IronResult<Response> {
 //    }
     let conn = db_pool.get().unwrap();
     let data = request.get::<Params>();
-    let slug = request.extensions.get::<Router>().unwrap().find("slug_or_id").unwrap();
-    println!("{:?}", data);
-//    match
-//        request.get_ref::<Params>() {
-//        Ok(map) => {
+    let slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap();
+
     let map = data.unwrap();
     let mut limit = -1;
     match map.find(&["limit"]) {
         Some(val) =>
             limit =  params::FromValue::from_value(val).unwrap(),
-//            limit = serde_json::from_str(&str).unwrap()
 
         None => {}
     }
-    println!("{}", limit);
-//    let limit = map.find(&["limit"]);
+
     let mut desc = false;
     match map.find(&["desc"]) {
         Some(val) =>
             desc = params::FromValue::from_value(val).unwrap(),
-//            desc = serde_json::from_str(&val.unwrap())
         None => {}
     }
 
@@ -163,19 +157,18 @@ pub fn get_threads(request : &mut Request) -> IronResult<Response> {
         Some(val) => since = params::FromValue::from_value(val).unwrap(),
         None => {}
     }
-//    let desc = map.find(&["desc"]);
-//    let since = map.find(&["since"]);
-
 
 
     match t_m::get_threads(slug, limit, desc, since, &conn) {
         Ok(val) => {
-
+            resp.set_mut(JsonResponse::json(val)).set_mut(status::Ok);
+            return Ok(resp);
         }
         Err(err) => {
-//            if err = 404 {
-//                re
-//            }
+            if err == 404 {
+                resp.set_mut(JsonResponse::json(ErrorMsg{message: "err"})).set_mut(status::NotFound);
+                return Ok(resp);
+            }
         }
     }
 //            limit = l;
@@ -194,7 +187,6 @@ pub fn get_threads(request : &mut Request) -> IronResult<Response> {
 //        Ok(val) => println!("{:?}", val),
 //        Err(_) => println!("nnn")
 //    }
-    resp.set_mut(JsonResponse::json(ErrorMsg{message: "err"})).set_mut(status::Conflict);
     return Ok(resp);
 }
 

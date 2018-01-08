@@ -86,7 +86,7 @@ pub fn get_users(slug: &str, conn: &PostgresConnection) -> Result<Vec<User>, i32
 
 
     let users: Vec<User> = Vec::new();
-    println!("{:?}", forum);
+//    println!("{:?}", forum);
     return Ok(users);
 }
 
