@@ -20,6 +20,7 @@ use queries::thread::*;
 use queries::forum::*;
 use serde_json;
 use postgres::types::{INT4, TIMESTAMPTZ};
+use serde_json::from_str;
 
 pub struct TimeTZ {
     t: Option<DateTime<Utc>>
@@ -138,7 +139,121 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
     return Ok(threads);
 }
 
+pub fn update_thread(slug: &String, json_thread: &JsonThreadUpdate, conn: &PostgresConnection) -> Result<Thread, i32> {
+    let mut query = "UPDATE threads SET ".to_string();
+    let mut args: Vec<Box<ToSql>> = vec![];
+    let mut counter: i32 = 1;
 
+    let message;
+    if json_thread.message != None {
+        let msg = json_thread.message.clone();
+        message = msg.unwrap();
+        query += &format!("message = ${},", counter);
+        args.push(Box::new(message));
+        counter += 1;
+    }
+
+    let title;
+    if json_thread.title != None {
+        let tit = json_thread.title.clone();
+        title = tit.unwrap();
+        query += &format!("title = ${},", counter);
+        args.push(Box::new(title));
+        counter += 1;
+    }
+
+    let mut id: i32 = 0;
+    match from_str::<i32>(slug) {
+        Ok(val) => {
+            id = val;
+        }
+        Err(e) => {
+            id = -1;
+        }
+    }
+
+    if counter > 1 {
+        let mut result = query.trim_matches(',').to_string();
+        if id > 0 {
+            args.push(Box::new(id));
+            result += &format!(" WHERE id = ${} ", counter);
+        } else {
+            args.push(Box::new(slug.to_string()));
+            result += &format!(" WHERE slug = ${}::CITEXT ", counter);
+        }
+
+        let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();
+        let data = conn.execute(&result, &binds_borrowed).unwrap();
+    }
+
+    let thread_query;
+    if id != -1 {
+        thread_query = conn.query(search_thread_by_id, &[&id]).unwrap();
+    } else {
+        thread_query = conn.query(search_thread_by_slug, &[&slug]).unwrap();
+    }
+
+    if thread_query.len() == 0 {
+        return Err(404);
+    }
+
+    let mut thread: Thread = empty_thread();
+
+    for row in &thread_query {
+        read_thread(&mut thread, row);
+    }
+    return Ok(thread);
+}
+
+
+//    if (threadModel.getMessage() != null) {
+//        builder.append(" message = ?,");
+//        args.add(threadModel.getMessage());
+//    }
+//
+//    if (threadModel.getTitle() != null) {
+//        builder.append(" title = ?,");
+//        args.add(threadModel.getTitle());
+//    }
+//
+//    if (!args.isEmpty()) {
+//        builder.delete(builder.length() - 1, builder.length());
+//        if (threadModel.getId() != null) {
+//            builder.append(" WHERE id = ?");
+//            args.add(threadModel.getId());
+//        }
+//            else {
+//                builder.append(" WHERE slug = ?::CITEXT");
+//                args.add(threadModel.getSlug());
+//            }
+//        jdbcTemplate.update(builder.toString(), args.toArray());
+//    }
+//        match from_str::<i32>(slug) {
+//            Ok(val) => {
+//                id = val;
+//                args.push(Box::new(id));
+//                result += &format!(" WHERE id = ${} ", counter);
+//            }
+//            Err(e) => {
+//                id = -1;
+//                args.push(Box::new(slug.to_string()));
+//                result += &format!(" WHERE slug = ${}::CITEXT ", counter);
+//            }
+//        }
+
+pub fn count(conn: &PostgresConnection) -> i32 {
+    let query = conn.query("SELECT COUNT(*) FROM threads", &[]).unwrap();
+    let mut cnt: i32 = 0;
+    for row in &query {
+        cnt = row.get(0);
+    }
+    return cnt;
+}
+
+pub fn clear(conn: &PostgresConnection) -> i32 {
+    let query = conn.query("DELETE FROM threads", &[]).unwrap();
+    return 0;
+}
 
 //fn print_type_of<T>(_: &T) {
 //    println!("{}", unsafe { std::intrinsics::type_name::<T>() });

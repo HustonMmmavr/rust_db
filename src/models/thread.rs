@@ -18,6 +18,12 @@ pub struct JsonThread {
     pub slug: Option<String>
 }
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct JsonThreadUpdate {
+    pub message: Option<String>,
+    pub title: Option<String>,
+}
+
 #[derive(Serialize, Debug)]
 pub struct Thread {
     pub id: i32,

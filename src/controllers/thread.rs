@@ -121,6 +121,23 @@ pub fn get_posts() {
 
 }
 
-pub fn update_thread() {
+pub fn update_thread_(request: &mut Request) -> IronResult<Response> {
+    let mut resp = Response::new();
 
+    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
+    let conn = db_pool.get().unwrap();
+    let json_thread = request.get::<bodyparser::Struct<JsonThreadUpdate>>().unwrap().unwrap();
+    let slug_or_id = request.extensions.get::<Router>().unwrap().find("slug_or_id").unwrap().to_string();
+
+    match update_thread(&slug_or_id, &json_thread, &conn) {
+        Ok(val) => {
+            resp.set_mut(JsonResponse::json(val)).set_mut(status::Ok);
+            Ok(resp)
+        }
+        Err(e) =>   {
+            resp.set_mut(JsonResponse::json(ErrorMsg{message: "Not found"})).set_mut(status::NotFound);
+            return Ok(resp);
+        }
+
+    }
 }

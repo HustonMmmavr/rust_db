@@ -34,3 +34,17 @@ pub fn find_user_id_and_nick(nick: &String, conn: &PostgresConnection) -> Result
     }
     return Ok((u_name, u_id));
 }
+
+pub fn count(conn: &PostgresConnection) -> i32 {
+    let query = conn.query("SELECT COUNT(*) FROM userprofiles", &[]).unwrap();
+    let mut cnt: i32 = 0;
+    for row in &query {
+        cnt = row.get(0);
+    }
+    return cnt;
+}
+
+pub fn clear(conn: &PostgresConnection) -> i32 {
+    let query = conn.query("DELETE FROM userprofiles", &[]).unwrap();
+    return 0;
+}

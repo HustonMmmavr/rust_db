@@ -119,38 +119,17 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresC
 
     return Ok(posts);
 }
-//        println!("{:?}", json_post);
-//        println!("{:?}", query);
 
-//    let tran = conn.transaction().unwrap();
-//    let stmt = tran.prepare(INSERT_POST_BIG).unwrap();
-//    for post in db_posts {
-//
-//    }
+pub fn count(conn: &PostgresConnection) -> i32 {
+    let query = conn.query("SELECT COUNT(*) FROM posts",  &[]).unwrap();
+    let mut cnt: i32 = 0;
+    for row in &query {
+        cnt = row.get(0);
+    }
+    return cnt;
+}
 
-//    let data: Vec<Box<ToSql>> = vec![Box::new(3i32), Box::new("hello"),
-//                                     Box::new(4i32), Box::new("world")];
-//    print!("{:?}", data);
-
-
-//        println!("forum{}", thread.forum);
-//        println!("forum{}", f_id);
-
-
-//    let f: postgres_array::Array<i32> = postgres_array::Array::from_vec(da, 1);
-//    println!("{:?}", f);
-//    let post
-
-//    pub const INSERT_POST_BIG: &'static str = "INSERT INTO posts(id, parent_id, author_id, author_name, forum_slug, created, message, thread_id)\
-//VALUES($1, $2, $3, $4::CITEXT, $5::CITEXT, $6, $7, $8)";
-
-
-//            pst = Post{ id: p_id, author: u_name.clone(),
-//            message: message.clone(), forum: thread.forum.to_string(), thread: thread.id,
-//            parent: 0, created: format!{"{:?}", created }, isEdited: false
-//            };
-
-//            dbPst = DbPost { id: p_id, author_id: u_id, author_name: u_name.clone(),
-//                message: message.clone(), forum_id: f_id, forum_slug: thread.forum.to_string(), thread: thread.id,
-//                parent: 0, created: created
-//            };
+pub fn clear(conn: &PostgresConnection) -> i32 {
+    let query = conn.query("DELETE FROM posts", &[]).unwrap();
+    return 0;
+}

@@ -39,44 +39,6 @@ pub fn get_forum(slug: &str, conn: &PostgresConnection)  -> Result<Forum, i32> {
 
     return Ok(forum);
 }
-//
-//def get_users(params)
-//p params
-//ds = @db.fetch(@@search_forum, params['slug'])
-//p ds
-//p ds[:data]
-//if ds.count == 0
-//return {:data => @@not_found, :status => 'NO_RES'}
-//end
-//
-//f_id = ds.first[:id]
-//
-//query = @@get_users + "forum_id = :forum_id )"
-//since = params['since']
-//desc = params['desc']
-//limit = params['limit']
-//hash = {}
-//hash[:forum_id] = f_id
-//if since != nil
-//query += " AND u.nickname " + (desc == "true" ? " < :since::CITEXT " : " > :since::CITEXT ")
-//hash[:since] = since
-//end
-//
-//query += "ORDER BY u.nickname" + (desc == "true" ? " DESC " : " ")
-//
-//if limit != nil
-//query += "LIMIT :limit"
-//hash[:limit] = limit
-//end
-//
-//ds = @db.fetch(query, hash)
-//arr = ds.all
-//# arr.each do |data|
-//#   data[:author] = data.delete(:author_name)
-//#   data[:forum] = data.delete(:forum_slug)
-//# end
-//return {:data => arr, :status=> 'OK'}
-//end
 
 pub fn get_users(slug: &str, limit: i32, desc: bool, since: String, conn: &PostgresConnection) -> Result<Vec<User>, i32> {
     let forum_query = conn.query(GET_FORUM_ID, &[&slug]).unwrap();
@@ -114,8 +76,6 @@ pub fn get_users(slug: &str, limit: i32, desc: bool, since: String, conn: &Postg
         counter += 1;
     }
 
-//    println!("{}", query);
-
     let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();//args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
     let query_rows = conn.query(&query, &binds_borrowed).unwrap();
 
@@ -127,9 +87,16 @@ pub fn get_users(slug: &str, limit: i32, desc: bool, since: String, conn: &Postg
     return Ok(users);
 }
 
-//pub
+pub fn count(conn: &PostgresConnection) -> i32 {
+    let query = conn.query("SELECT COUNT(*) FROM forums", &[]).unwrap();
+    let mut cnt: i32 = 0;
+    for row in &query {
+        cnt = row.get(0);
+    }
+    return cnt;
+}
 
-
-pub fn get_threads() {
-
+pub fn clear(conn: &PostgresConnection) -> i32 {
+    let query = conn.query("DELETE FROM forums", &[]).unwrap();
+    return 0;
 }
