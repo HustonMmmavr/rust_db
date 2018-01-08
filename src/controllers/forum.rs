@@ -88,11 +88,12 @@ pub fn get_forum(request : &mut Request) -> IronResult<Response> {
     }
 }
 use params;
+
 pub fn create_thread(request : &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
 
     let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
-    let conn = db_pool.get().unwrap();
+//    let conn = db_pool.get().unwrap();
 
     let mut thread = request.get::<bodyparser::Struct<JsonThread>>();
     let ref slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap_or("/");
@@ -107,7 +108,7 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
     }
 
 //    println!("{:?}", dbThread);
-    match t_m::create_thread(&mut dbThread, &conn) {
+    match t_m::create_thread_pool(&mut dbThread, &db_pool) {
         Ok(val) => {
             resp.set_mut(JsonResponse::json(val)).set_mut(status::Created);
             return Ok(resp);
@@ -118,9 +119,11 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
                 return Ok(resp);
             }
             else {
-
                 let slugg = dbThread.slug.unwrap().to_string();
-                let existing_thread = t_m::get_thread_by_slug(&slugg, &conn).unwrap();
+
+//                let existing_thread = t_m::get_thread_by_slug(&slugg, &conn).unwrap();
+                let existing_thread = t_m::get_thread_by_slug_pool(&slugg, &db_pool).unwrap();
+
                 resp.set_mut(JsonResponse::json(existing_thread)).set_mut(status::Conflict);
                 return Ok(resp);
             }

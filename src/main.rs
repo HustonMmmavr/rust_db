@@ -47,6 +47,8 @@ fn fill_route(router: &mut Router) {
     router.post("/api/thread/:slug_or_id/create", controllers::thread::create_posts, "create_posts");
     router.get("/api/thread/:slug_or_id/details", controllers::thread::get_thread_, "get_thread");
     router.post("/api/thread/:slug_or_id/details", controllers::thread::update_thread_, "update_thread");
+    router.post("/api/thread/:slug_or_id/vote", controllers::thread::vote_, "vote");
+
     router.post("/api/service/clear", controllers::service::clear, "clear");
 
 //    router.get("/api/forum/:slug/threads", controllers::forum::get_threads, "get_threads");
@@ -155,7 +157,7 @@ fn main() {
 //    v.push("sa".to_string());
 //    print!("{}", v);
 //    String user = "comp"
-    let mut uri = "postgres://comp:951103@localhost/test1";
+    let mut uri = "postgres://mavr:951103@localhost/test1";
     let mut router = Router::new();           // Alternative syntax:
     fill_route(&mut router);
     let mut chain = Chain::new(router);

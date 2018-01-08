@@ -153,9 +153,13 @@ pub fn vote_ (request: &mut Request) -> IronResult<Response> {
 
     match vote(json_vote, slug_or_id, &conn) {
         Ok(val) => {
-
+            resp.set_mut(JsonResponse::json(val)).set_mut(status::Ok);
+            return Ok(resp);
         }
-        Err(e) => {}
+        Err(e) => {
+            resp.set_mut(JsonResponse::json(ErrorMsg{message: "Not found"})).set_mut(status::NotFound);
+            return Ok(resp);
+        }
     }
 
     return Ok(resp);
