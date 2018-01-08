@@ -27,7 +27,7 @@ mod managers;
 #[macro_use]
 mod db;
 mod conf;
-mod controllers {pub mod user; pub mod forum; pub mod post; pub mod thread;}
+mod controllers {pub mod user; pub mod forum; pub mod post; pub mod thread; pub mod service;}
 
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 fn fill_route(router: &mut Router) {
@@ -47,7 +47,7 @@ fn fill_route(router: &mut Router) {
     router.post("/api/thread/:slug_or_id/create", controllers::thread::create_posts, "create_posts");
     router.get("/api/thread/:slug_or_id/details", controllers::thread::get_thread_, "get_thread");
     router.post("/api/thread/:slug_or_id/details", controllers::thread::update_thread_, "update_thread");
-    router.post("/api/thread/:slug_or_id/vote", controllers::thread::vote_, "update_thread");
+    router.post("/api/service/clear", controllers::service::clear, "clear");
 
 //    router.get("/api/forum/:slug/threads", controllers::forum::get_threads, "get_threads");
 
@@ -126,7 +126,28 @@ extern crate streaming_iterator;
 ////    let stmt = conn.prepare("COPY aa (id, bar) FROM STDIN (FORMAT binary)").unwrap();
 ////    stmt.copy_in(&[], &mut reader).unwrap();
 //}
-
+//use std::thread;
+////use r2d2_postgres::{TlsMode, PostgresConnectionManager};
+////use r2d2::{Config};
+//fn main() {
+//    let manager = PostgresConnectionManager::new("postgres://comp:951103@localhost",
+//                                                 TlsMode::None).unwrap();
+////    let config = Config::builder()
+////        .max_size(15)
+////        .build(manager)
+////        .unwrap();
+//
+//    let pool = r2d2::Pool::new(manager).unwrap();
+//
+//    for i in 0..1000000i32 {
+//        let pool = pool.clone();
+//        println!("{}", i);
+//        thread::spawn(move || {
+//            let conn = pool.get().unwrap();
+//            conn.execute("INSERT INTO foo (bar) VALUES ($1)", &[&i]).unwrap();
+//        });
+//    }
+//}
 //
 fn main() {
 //    let mut v: Vec<_> = Vec::new();

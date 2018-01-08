@@ -27,8 +27,16 @@ use managers::thread_manager as t_m;
 use models::thread::{Thread, JsonThread, empty_thread, copy_json_thread};
 
 
-pub fn clear(request: &Request) -> IronResponse<Re{
-
+pub fn clear(request: &mut Request) -> IronResult<Response> {
+    let mut resp = Response::new();
+    println!("here");
+//    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
+//    let conn = db_pool.get().unwrap();
+//
+//    let mut forum = request.get::<bodyparser::Struct<JsonForum>>();
+//    let mut dbForum = empty_forum();
+    resp.set_mut(JsonResponse::json(ErrorMsg{message: {"Ok"}})).set_mut(status::Ok);
+    return Ok(resp);
 }
 
 pub fn count() {
