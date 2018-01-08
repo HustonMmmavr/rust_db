@@ -94,6 +94,31 @@ CREATE TABLE IF NOT EXISTS votes (
   vote INTEGER DEFAULT 0,
   CONSTRAINT one_owner_thread_pair UNIQUE (owner_id, thread_id)
 );
+-- pub const create_thread: &'static str = "SELECT create_thread($1, $2::TIMESTAMPTZ, $3, $4, $5, $6)";
+
+CREATE OR REPLACE FUNCTION create_thread(u_name citext, created timestamptz, f_slug citext,
+ message text, t_slug citext, title text)
+  RETURNS INTEGER as '
+  DECLARE
+    u_id integer;
+    t_id integer;
+    f_id integer;
+    forum_slug citext;
+    u_nickname citext;
+--     date TIMESTAMPTZ;
+  BEGIN
+      select id, nicknmae  from userprofiles where nickname = u_name into u_id, u_nickname;
+      select id from forums where slug = f_slug into f_id, forum_slug;
+      if created is null then
+        created = NOW();
+      end if;
+      insert into threads(author_id, author_name, forum_id, forum_slug, title, created, message, slug)
+      values(u_id, u_nickname, f_id, forum_slug, title, created, message, t_slug) returning id into t_id;
+      update forums set threads = threads + 1 where id = f_id;
+      insert into forums_and_users(forum_id, user_id) values(f_id, u_id);
+      RETURN t_id;
+   END;'
+LANGUAGE plpgsql;
 
 --------------------- TRIGGER FOR UPDATE forums ------------------------
 CREATE OR REPLACE FUNCTION insert_forum_func() RETURNS TRIGGER AS
@@ -165,35 +190,35 @@ CREATE TRIGGER insert_posts_trigger AFTER INSERT ON posts
 -- LANGUAGE plpgsql;
 
 ---------------------- vote -----------------------------------------
-CREATE OR REPLACE FUNCTION create_or_update_vote(u_id INTEGER, t_id INTEGER, v INTEGER)
-  RETURNS VOID AS '
-BEGIN
-  INSERT INTO votes (owner_id, thread_id, vote) VALUES (u_id, t_id, v)
-  ON CONFLICT (owner_id, thread_id)
-    DO UPDATE SET vote = v;
-  UPDATE threads
-  SET votes = (SELECT SUM(vote)
-               FROM votes
-               WHERE thread_id = t_id)
-  WHERE id = t_id;
-END;'
-LANGUAGE plpgsql;
+-- CREATE OR REPLACE FUNCTION create_or_update_vote(u_id INTEGER, t_id INTEGER, v INTEGER)
+--   RETURNS VOID AS '
+-- BEGIN
+--   INSERT INTO votes (owner_id, thread_id, vote) VALUES (u_id, t_id, v)
+--   ON CONFLICT (owner_id, thread_id)
+--     DO UPDATE SET vote = v;
+--   UPDATE threads
+--   SET votes = (SELECT SUM(vote)
+--                FROM votes
+--                WHERE thread_id = t_id)
+--   WHERE id = t_id;
+-- END;'
+-- LANGUAGE plpgsql;
 
 -- --
--- -- CREATE OR REPLACE FUNCTION create_or_update_vote(u_id integer, t_id integer, v integer)
--- --   RETURNS VOID as '
--- --   DECLARE
--- --     flag integer;
--- --   BEGIN
--- --     select 1 from votes where owner_id = u_id and thread_id = t_id into flag;
--- --     IF flag = 1 THEN
--- --       UPDATE votes SET vote = v WHERE owner_id = u_id and thread_id = t_id;
--- --     ELSE
--- --       INSERT into votes(owner_id, thread_id, vote) VALUES(u_id, t_id, v);
--- --     END IF;
--- --     UPDATE threads set votes = (SELECT SUM(vote) FROM votes WHERE thread_id = t_id);
--- --    END;'
--- -- LANGUAGE plpgsql;
+CREATE OR REPLACE FUNCTION create_or_update_vote(u_id integer, t_id integer, v integer)
+  RETURNS VOID as '
+  DECLARE
+    flag integer;
+  BEGIN
+    select 1 from votes where owner_id = u_id and thread_id = t_id into flag;
+    IF flag = 1 THEN
+     UPDATE threads set votes = votes + 2*v;
+    ELSE
+      INSERT into votes(owner_id, thread_id, vote) VALUES(u_id, t_id, v);
+      UPDATE threads set votes = votes + v;
+    END IF;
+   END;'
+LANGUAGE plpgsql;
 -- -- CREATE PROCEDURE fill_created_forum();
 -- --
 -- -- CREATE PROCEDURE fill_r
