@@ -2,12 +2,15 @@
 <project version="4">
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/src/controllers/user.rs" description="    let mut resp = Response::new();&#10;&#10;    let db_po..." line="31" />
-    <bookmark url="file://$PROJECT_DIR$/src/main.rs" description="fn main() {&#10;//&#10;//    let mut uri = &quot;postgres://mav..." line="124" />
+    <bookmark url="file://$PROJECT_DIR$/src/main.rs" description="fn main() {&#10;//&#10;//    let mut uri = &quot;postgres://mav..." line="128" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6f920085-0d42-4e24-83bc-22997e8e7cec" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/V1__userinit.sql" afterPath="$PROJECT_DIR$/V1__userinit.sql" />
       <change beforePath="$PROJECT_DIR$/src/controllers/forum.rs" afterPath="$PROJECT_DIR$/src/controllers/forum.rs" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/post.rs" afterPath="$PROJECT_DIR$/src/controllers/post.rs" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/service.rs" afterPath="$PROJECT_DIR$/src/controllers/service.rs" />
+      <change beforePath="$PROJECT_DIR$/src/controllers/thread.rs" afterPath="$PROJECT_DIR$/src/controllers/thread.rs" />
       <change beforePath="$PROJECT_DIR$/src/main.rs" afterPath="$PROJECT_DIR$/src/main.rs" />
       <change beforePath="$PROJECT_DIR$/src/managers/forum_manager.rs" afterPath="$PROJECT_DIR$/src/managers/forum_manager.rs" />
       <change beforePath="$PROJECT_DIR$/src/managers/thread_manager.rs" afterPath="$PROJECT_DIR$/src/managers/thread_manager.rs" />
@@ -26,8 +29,8 @@
       <file leaf-file-name="thread_manager.rs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/managers/thread_manager.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="194" column="0" lean-forward="false" selection-start-line="194" selection-start-column="0" selection-end-line="198" selection-end-column="5" />
+            <state relative-caret-position="234">
+              <caret line="136" column="23" lean-forward="true" selection-start-line="89" selection-start-column="4" selection-end-line="136" selection-end-column="23" />
               <folding>
                 <element signature="e#574#575#0" expanded="true" />
                 <element signature="e#604#605#0" expanded="true" />
@@ -46,11 +49,31 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="V1__userinit.sql" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/V1__userinit.sql">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="288">
+              <caret line="181" column="0" lean-forward="false" selection-start-line="181" selection-start-column="0" selection-end-line="315" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="thread.rs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controllers/thread.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-80">
-              <caret line="51" column="0" lean-forward="false" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+            <state relative-caret-position="378">
+              <caret line="120" column="0" lean-forward="false" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="361">
+              <caret line="47" column="82" lean-forward="false" selection-start-line="47" selection-start-column="82" selection-end-line="47" selection-end-column="82" />
               <folding />
             </state>
           </provider>
@@ -59,28 +82,28 @@
       <file leaf-file-name="service.rs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controllers/service.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="72">
+              <caret line="4" column="14" lean-forward="false" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="user_manager.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/managers/user_manager.rs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="576">
-              <caret line="32" column="18" lean-forward="false" selection-start-line="32" selection-start-column="18" selection-end-line="32" selection-end-column="18" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="forum.rs" pinned="false" current-in-tab="true">
+      <file leaf-file-name="forum.rs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controllers/forum.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="163" column="68" lean-forward="false" selection-start-line="163" selection-start-column="68" selection-end-line="163" selection-end-column="68" />
+            <state relative-caret-position="226">
+              <caret line="206" column="22" lean-forward="true" selection-start-line="206" selection-start-column="22" selection-end-line="206" selection-end-column="22" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="forum.rs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/queries/forum.rs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="54">
+              <caret line="3" column="22" lean-forward="false" selection-start-line="3" selection-start-column="10" selection-end-line="3" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -89,28 +112,8 @@
       <file leaf-file-name="forum_manager.rs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/managers/forum_manager.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="316">
-              <caret line="89" column="21" lean-forward="true" selection-start-line="89" selection-start-column="21" selection-end-line="89" selection-end-column="21" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="forum.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/models/forum.rs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="18" column="10" lean-forward="false" selection-start-line="18" selection-start-column="10" selection-end-line="18" selection-end-column="10" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="post_manager.rs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/managers/post_manager.rs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="103" column="22" lean-forward="false" selection-start-line="103" selection-start-column="22" selection-end-line="103" selection-end-column="22" />
+            <state relative-caret-position="-332">
+              <caret line="88" column="26" lean-forward="true" selection-start-line="88" selection-start-column="26" selection-end-line="88" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -119,8 +122,8 @@
       <file leaf-file-name="post.rs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controllers/post.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="90">
+              <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -158,8 +161,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/controllers/post.rs" />
-        <option value="$PROJECT_DIR$/src/controllers/service.rs" />
         <option value="$PROJECT_DIR$/src/db/db.rs" />
         <option value="$PROJECT_DIR$/src/db.rs" />
         <option value="$PROJECT_DIR$/src/models/error.rs" />
@@ -172,19 +173,21 @@
         <option value="$PROJECT_DIR$/src/queries/mod.rs" />
         <option value="$PROJECT_DIR$/Cargo.toml" />
         <option value="$PROJECT_DIR$/src/queries/user.rs" />
-        <option value="$PROJECT_DIR$/V1__userinit.sql" />
         <option value="$PROJECT_DIR$/src/managers/user_manager.rs" />
-        <option value="$PROJECT_DIR$/src/controllers/thread.rs" />
         <option value="$PROJECT_DIR$/src/queries/forum.rs" />
         <option value="$PROJECT_DIR$/src/models/post.rs" />
         <option value="$PROJECT_DIR$/src/queries/post.rs" />
         <option value="$PROJECT_DIR$/src/queries/thread.rs" />
         <option value="$PROJECT_DIR$/src/controllers/user.rs" />
         <option value="$PROJECT_DIR$/src/managers/post_manager.rs" />
-        <option value="$PROJECT_DIR$/src/main.rs" />
-        <option value="$PROJECT_DIR$/src/managers/forum_manager.rs" />
         <option value="$PROJECT_DIR$/src/managers/thread_manager.rs" />
+        <option value="$PROJECT_DIR$/src/main.rs" />
+        <option value="$PROJECT_DIR$/src/controllers/thread.rs" />
+        <option value="$PROJECT_DIR$/src/controllers/post.rs" />
+        <option value="$PROJECT_DIR$/src/controllers/service.rs" />
         <option value="$PROJECT_DIR$/src/controllers/forum.rs" />
+        <option value="$PROJECT_DIR$/src/managers/forum_manager.rs" />
+        <option value="$PROJECT_DIR$/V1__userinit.sql" />
       </list>
     </option>
   </component>
@@ -406,12 +409,12 @@
       <workItem from="1515322092470" duration="22828000" />
       <workItem from="1515358564412" duration="785000" />
       <workItem from="1515359562808" duration="6409000" />
-      <workItem from="1515410468163" duration="4990000" />
+      <workItem from="1515410468163" duration="6427000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="140391000" />
+    <option name="totallyTimeSpent" value="141828000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="456" y="204" width="1920" height="1053" extended-state="6" />
@@ -457,7 +460,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/plugin-0.2.6/src/lib.rs" />
     <entry file="file://$USER_HOME$/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src/libstd/io/mod.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="11034">
@@ -576,34 +578,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/queries/forum.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="22" lean-forward="false" selection-start-line="3" selection-start-column="10" selection-end-line="3" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/models/thread.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="954">
           <caret line="53" column="27" lean-forward="false" selection-start-line="53" selection-start-column="27" selection-end-line="53" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/V1__userinit.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-323">
-          <caret line="160" column="11" lean-forward="false" selection-start-line="160" selection-start-column="11" selection-end-line="160" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="129" column="34" lean-forward="false" selection-start-line="129" selection-start-column="34" selection-end-line="129" selection-end-column="34" />
           <folding />
         </state>
       </provider>
@@ -656,14 +634,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/managers/forum_manager.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="316">
-          <caret line="89" column="21" lean-forward="true" selection-start-line="89" selection-start-column="21" selection-end-line="89" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/managers/post_manager.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
@@ -672,18 +642,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/controllers/thread.rs">
+    <entry file="file://$USER_HOME$/.cargo/registry/src/github.com-1ecc6299db9ec823/iron-0.6.0/src/lib.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-80">
-          <caret line="51" column="0" lean-forward="false" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+        <state relative-caret-position="198">
+          <caret line="107" column="9" lean-forward="false" selection-start-line="107" selection-start-column="9" selection-end-line="107" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="47" column="82" lean-forward="false" selection-start-line="47" selection-start-column="82" selection-end-line="47" selection-end-column="82" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/queries/forum.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="22" lean-forward="false" selection-start-line="3" selection-start-column="10" selection-end-line="3" selection-end-column="22" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/controllers/service.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="72">
+          <caret line="4" column="14" lean-forward="false" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
           <folding />
         </state>
       </provider>
@@ -696,10 +682,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/controllers/post.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controllers/forum.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="206" column="22" lean-forward="true" selection-start-line="206" selection-start-column="22" selection-end-line="206" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controllers/thread.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="120" column="0" lean-forward="false" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/managers/thread_manager.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="194" column="0" lean-forward="false" selection-start-line="194" selection-start-column="0" selection-end-line="198" selection-end-column="5" />
+        <state relative-caret-position="234">
+          <caret line="136" column="23" lean-forward="true" selection-start-line="89" selection-start-column="4" selection-end-line="136" selection-end-column="23" />
           <folding>
             <element signature="e#574#575#0" expanded="true" />
             <element signature="e#604#605#0" expanded="true" />
@@ -707,18 +717,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/controllers/post.rs">
+    <entry file="file://$PROJECT_DIR$/src/managers/forum_manager.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="-332">
+          <caret line="88" column="26" lean-forward="true" selection-start-line="88" selection-start-column="26" selection-end-line="88" selection-end-column="26" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/controllers/forum.rs">
+    <entry file="file://$PROJECT_DIR$/V1__userinit.sql">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="163" column="68" lean-forward="false" selection-start-line="163" selection-start-column="68" selection-end-line="163" selection-end-column="68" />
+        <state relative-caret-position="288">
+          <caret line="181" column="0" lean-forward="false" selection-start-line="181" selection-start-column="0" selection-end-line="315" selection-end-column="0" />
           <folding />
         </state>
       </provider>

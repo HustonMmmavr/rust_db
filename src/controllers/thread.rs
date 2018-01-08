@@ -80,3 +80,47 @@ pub fn create_posts(request : &mut Request) -> IronResult<Response> {
     }
     return Ok(resp);
 }
+
+
+pub fn get_thread_(request : &mut Request) -> IronResult<Response> {
+    let mut resp = Response::new();
+
+    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
+    let conn = db_pool.get().unwrap();
+//    let raw = request.get::<bodyparser::Raw>().unwrap().unwrap();
+    let slug_or_id = request.extensions.get::<Router>().unwrap().find("slug_or_id").unwrap_or("/");
+
+//    let mut thread_option;
+    match from_str::<i32>(slug_or_id) {
+        Ok(val) => {
+            match get_thread(&val, &conn) {
+                Ok(thread) => {
+                    resp.set_mut(JsonResponse::json(thread)).set_mut(status::Ok);
+                }
+                Err(_) => {
+                    resp.set_mut(JsonResponse::json(ErrorMsg{message: "Not found"})).set_mut(status::NotFound);
+                }
+            }
+        }
+        Err(_)  => {
+            match get_thread_by_slug(&slug_or_id.to_string(), &conn) {
+                Ok(thread) => {
+                    resp.set_mut(JsonResponse::json(thread)).set_mut(status::Ok);
+                }
+                Err(_) => {
+                    resp.set_mut(JsonResponse::json(ErrorMsg{message: "Not found"})).set_mut(status::NotFound);
+                }
+            }
+
+        }
+    }
+    return Ok(resp);
+}
+
+pub fn get_posts() {
+
+}
+
+pub fn update_thread() {
+
+}

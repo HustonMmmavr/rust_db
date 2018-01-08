@@ -131,7 +131,6 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
 pub fn get_threads(request : &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
     let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
-//    }
     let conn = db_pool.get().unwrap();
     let data = request.get::<Params>();
     let slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap();
@@ -171,22 +170,6 @@ pub fn get_threads(request : &mut Request) -> IronResult<Response> {
             }
         }
     }
-//            limit = l;
-//            println!("{:?}", l);
-//            limit =l;// [);
-//            desc = d;//map.find();
-//            since = s;//map.find("since");
-//        },
-//        Err(_) => {}
-//    }
-//    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
-//    let conn = db_pool.get().unwrap();
-//
-//    let ref slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap_or("/");
-//    match f_m::get_users(slug, &conn) {
-//        Ok(val) => println!("{:?}", val),
-//        Err(_) => println!("nnn")
-//    }
     return Ok(resp);
 }
 
@@ -195,9 +178,33 @@ pub fn get_users(request : &mut Request) -> IronResult<Response> {
 
     let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
     let conn = db_pool.get().unwrap();
+    let data = request.get::<Params>();
+    let slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap_or("/");
 
-    let ref slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap_or("/");
-    match f_m::get_users(slug, &conn) {
+    let map = data.unwrap();
+
+    let mut limit = -1;
+    match map.find(&["limit"]) {
+        Some(val) =>
+            limit =  params::FromValue::from_value(val).unwrap(),
+
+        None => {}
+    }
+
+    let mut desc = false;
+    match map.find(&["desc"]) {
+        Some(val) =>
+            desc = params::FromValue::from_value(val).unwrap(),
+        None => {}
+    }
+
+    let mut since = String::new();
+    match map.find(&["since"]) {
+        Some(val) => since = params::FromValue::from_value(val).unwrap(),
+        None => {}
+    }
+
+    match f_m::get_users(slug, limit, desc, since, &conn) {
         Ok(val) => println!("{:?}", val),
         Err(_) => println!("nnn")
     }
@@ -225,3 +232,21 @@ pub fn get_users(request : &mut Request) -> IronResult<Response> {
 ////            since = s;//map.find("since");
 //        },
 //        Err(_) => {}
+
+
+//            limit = l;
+//            println!("{:?}", l);
+//            limit =l;// [);
+//            desc = d;//map.find();
+//            since = s;//map.find("since");
+//        },
+//        Err(_) => {}
+//    }
+//    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
+//    let conn = db_pool.get().unwrap();
+//
+//    let ref slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap_or("/");
+//    match f_m::get_users(slug, &conn) {
+//        Ok(val) => println!("{:?}", val),
+//        Err(_) => println!("nnn")
+//    }

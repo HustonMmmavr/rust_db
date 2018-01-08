@@ -85,14 +85,6 @@ pub fn get_thread_by_slug(slug: &String, conn: &PostgresConnection ) -> Result<T
     return Ok(thread);
 }
 
-//fn print_type_of<T>(_: &T) {
-//    println!("{}", unsafe { std::intrinsics::type_name::<T>() });
-//}
-
-//    let forum_id: INT4 = f_id;
-
-//    let mut args: Vec<&str> = Vec::new();
-
 pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
     conn: &PostgresConnection) -> Result<Vec<Thread>, i32> {
     let forum_query = conn.query(GET_FORUM_ID, &[&slug]).unwrap();
@@ -106,22 +98,9 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
     }
 
     let mut query = String::new();
-//    let args: Vec<Box> Vec::new();
     let mut counter: i32 = 1;
 
-//    let mut desc = false;
-//    match _desc {
-//        &Some(val) => desc = serde_json::from_str(&val).unwrap(),
-//        &None => {}
-//    }
-
-//    let
-
     let mut args = Vec::<Box<ToSql>>::new();
-//    values.push(Box::new(sensor_id));
-//    values.push(Box::new(datetime));
-
-//    let f_id: i32 = 0;
     query.push_str(SEARCH_THREAD);
     query += &format!(" WHERE forum_id = ${} ", counter);
     counter+=1;
@@ -136,6 +115,51 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
         created = chrono::DateTime::<Utc>::from_str(&since).unwrap();
         args.push(Box::new(created));
     }
+
+    query += "ORDER BY created ";
+    query += if desc == true {"DESC "} else {" "};
+    let mut lim: i64 = 0;
+    if limit > 0 {
+        query += &format!("LIMIT ${}", counter);
+        lim = limit as i64;
+        args.push(Box::new(lim));
+        counter += 1;
+    }
+
+    let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();//args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
+    let query_rows = conn.query(&query, &binds_borrowed).unwrap();
+    let mut threads: Vec<Thread> = Vec::new();
+    for row in &query_rows {
+        let mut thread: Thread = empty_thread();
+        read_thread(&mut thread, row);
+        threads.push(thread);
+    }
+    return Ok(threads);
+}
+
+
+
+//fn print_type_of<T>(_: &T) {
+//    println!("{}", unsafe { std::intrinsics::type_name::<T>() });
+//}
+
+//    let forum_id: INT4 = f_id;
+
+//    let mut args: Vec<&str> = Vec::new();
+
+//    let mut desc = false;
+//    match _desc {
+//        &Some(val) => desc = serde_json::from_str(&val).unwrap(),
+//        &None => {}
+//    }
+
+//    let
+
+//    values.push(Box::new(sensor_id));
+//    values.push(Box::new(datetime));
+
+//    let f_id: i32 = 0;
+
 //    match since {
 //        &Some(val) => {
 //            query += "AND created ";
@@ -149,15 +173,25 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
 //        &None => {}
 //    }
 
-    query += "ORDER BY created ";
-    query += if desc == true {"DESC "} else {" "};
-    let mut lim: i64 = 0;
-    if limit > 0 {
-        query += &format!("LIMIT ${}", counter);
-        lim = limit as i64;
-        args.push(Box::new(lim));
-        counter += 1;
-    }
+//    let mut created: chrono::DateTime<Utc>;
+//    match since {
+//        Some(val) => //created =
+//    }
+//    match
+
+//    let binds_borrowed = args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
+//    println!("{}", query);
+//    match conn.query(&query, &[&2000i32, &4i64]) {
+//        Ok(_) => {}
+//        Err(e) => println!("{:?}", e)
+//    }
+//    if query_rows.len() == 0 {
+//        return Err(404);
+//    }
+//
+
+//    println!("{:?}", binds_borrowed);
+//    println!("{}", query);
 
 //    let mut lim: i32 = 0;
 //    query += "ORDER BY created ";
@@ -176,33 +210,3 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
 //    for arg in &args {
 //        print_type_of(arg);
 //    }
-
-    let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();//args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
-//    println!("{:?}", binds_borrowed);
-//    println!("{}", query);
-    let query_rows = conn.query(&query, &binds_borrowed).unwrap();
-//    let binds_borrowed = args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
-//    println!("{}", query);
-//    match conn.query(&query, &[&2000i32, &4i64]) {
-//        Ok(_) => {}
-//        Err(e) => println!("{:?}", e)
-//    }
-//    if query_rows.len() == 0 {
-//        return Err(404);
-//    }
-//
-    let mut threads: Vec<Thread> = Vec::new();
-    for row in &query_rows {
-        let mut thread: Thread = empty_thread();
-        read_thread(&mut thread, row);
-        threads.push(thread);
-    }
-    return Ok(threads);
-}
-
-
-//    let mut created: chrono::DateTime<Utc>;
-//    match since {
-//        Some(val) => //created =
-//    }
-//    match
