@@ -17,6 +17,12 @@ pub const COPY_POSTS: &'static str = "COPY posts (id, parent_id, author_id, auth
 
 pub const UPDATE_POST: &'static str = "UPDATE posts SET message = $1 , is_edited = true WHERE id = $2";
 
+pub const FLAT_OR_THREE_SORT: &'static str = "SELECT created, forum_slug, id, is_edited, message, parent_id, thread_id, author_name FROM posts WHERE thread_id = $1";
+
+pub const PARENT_TREE_SORT: &'static str = "SELECT created, forum_slug, id, is_edited, message, \
+parent_id, thread_id, author_name FROM posts WHERE path_to_post[0] IN (SELECT id FROM posts WHERE thread_id = $1\
+AND parent_id = 0 ";
+
 //id SERIAL PRIMARY KEY,
 //parent_id    INTEGER     DEFAULT 0,
 //author_id   INTEGER REFERENCES userprofiles (id) ON DELETE CASCADE   NOT NULL,

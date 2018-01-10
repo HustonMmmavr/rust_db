@@ -21,6 +21,7 @@ use ijr;
 use db;
 use ijr::{JsonResponseMiddleware, JsonResponse};
 use serde_json::from_str;
+
 use queries::user as u_q;
 use models::user as u_model;
 use models::error::{ErrorMsg};
@@ -34,6 +35,8 @@ use managers::post_manager::*;
 use managers::user_manager::*;
 use queries::post::*;
 use models::vote::*;
+use params;
+
 
 
 pub fn create_posts(request : &mut Request) -> IronResult<Response> {
@@ -120,7 +123,52 @@ pub fn get_thread_(request : &mut Request) -> IronResult<Response> {
 
 pub fn get_posts(request: &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
+    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
+    let conn = db_pool.get().unwrap();
+    let data = request.get::<Params>();
+    let slug = request.extensions.get::<Router>().unwrap().find("slug_or_id").unwrap();
 
+
+    let map = data.unwrap();
+    let mut limit = -1;
+    match map.find(&["limit"]) {
+        Some(val) =>
+            limit =  params::FromValue::from_value(val).unwrap(),
+
+        None => {}
+    }
+
+    let mut desc = false;
+    match map.find(&["desc"]) {
+        Some(val) =>
+            desc = params::FromValue::from_value(val).unwrap(),
+        None => {}
+    }
+
+    println!("{}",desc);
+
+    let mut since = String::new();
+    match map.find(&["since"]) {
+        Some(val) => since = params::FromValue::from_value(val).unwrap(),
+        None => {}
+    }
+
+    println!("{}", since);
+
+    let mut sort = String::new();
+    match map.find(&["sort"]) {
+        Some(val) => sort = params::FromValue::from_value(val).unwrap(),
+        None => sort = "flat".to_string()
+    }
+
+    match get_posts_sort(slug, limit, desc, since, sort, &conn) {
+        Ok(val) => {
+            resp.set_mut(JsonResponse::json(val)).set_mut(status::Ok);
+        }
+        Err(_) => {
+            resp.set_mut(JsonResponse::json(ErrorMsg{message: "Not found"})).set_mut(status::NotFound);
+        }
+    }
     return Ok(resp);
 }
 
