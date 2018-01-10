@@ -15,6 +15,8 @@ VALUES($1, $2, $3, $4::CITEXT, $5::CITEXT, $6, $7, $8)";
 pub const COPY_POSTS: &'static str = "COPY posts (id, parent_id, author_id, author_name, forum_id,\
  forum_slug, created, message, thread_id) FROM STDIN (FORMAT binary)";
 
+pub const UPDATE_POST: &'static str = "UPDATE posts SET message = $1 , is_edited = true WHERE id = $2";
+
 //id SERIAL PRIMARY KEY,
 //parent_id    INTEGER     DEFAULT 0,
 //author_id   INTEGER REFERENCES userprofiles (id) ON DELETE CASCADE   NOT NULL,

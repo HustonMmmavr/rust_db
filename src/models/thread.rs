@@ -24,7 +24,7 @@ pub struct JsonThreadUpdate {
     pub title: Option<String>,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub struct Thread {
     pub id: i32,
     pub title: String,

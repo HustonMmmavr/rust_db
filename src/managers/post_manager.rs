@@ -25,13 +25,16 @@ use postgres_binary_copy::BinaryCopyReader;
 use streaming_iterator::StreamingIterator;
 use postgres::types::{ToSql, INT4, VARCHAR, TIMESTAMPTZ, INT4_ARRAY, TEXT };
 use managers::forum_manager as f_m;
+use managers::forum_manager::*;
 use queries::forum::*;
+use queries::post::*;
+use managers::user_manager::*;
+use managers::thread_manager::get_thread;
 pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresConnection) -> Result<Vec<Post>, i32> {
     let created: chrono::DateTime<Utc> = Utc::now();
     let mut posts: Vec<Post> = Vec::new();
 
     let mut db_posts: Vec<DbPost> = Vec::new();
-//    let stmt = conn.prepare(INSERT_POST_BIG).unwrap();
     for json_post in json_posts {
         let mut post: Post;
         let forum: String = thread.forum.to_string();
@@ -120,8 +123,67 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresC
     return Ok(posts);
 }
 
-pub fn get_post(id: i32, related: , conn: &PostgresConnection) -> Result<{
+pub fn get_post(id: i32, related: String, conn: &PostgresConnection) -> Result<PostDetails, i32> {
 
+    let post_query = conn.query(SELELCT_POST_BY_ID, &[&id]).unwrap();
+    if post_query.len() == 0 {
+        return Err(404);
+    }
+
+    let split = related.split(",");
+    let vec: Vec<&str> = split.collect();
+
+    let mut post_details: PostDetails = empty_post_details();
+    let mut post: Post = empty_post();
+    for row in &post_query {
+        post = read_post(&row);
+    }
+
+    for arg in &vec {
+        if arg == &"user" {
+            let nick: &str = &post.author;
+            post_details.set_user( get_usr_by_nick(nick, &conn).unwrap());
+        }
+        if arg == &"forum" {
+            let forum: &str = &post.forum;
+            post_details.set_forum(get_forum(forum, &conn).unwrap());
+
+        }
+        if arg == &"thread" {
+            let thread: &i32 = &post.thread;
+            post_details.set_thread(get_thread(thread, &conn).unwrap());
+        }
+    }
+
+    post_details.set_post(post);
+    return Ok(post_details);
+
+}
+
+pub fn update_post(id: i32, json_post: &JsonPost, conn: &PostgresConnection) -> Result<Post, i32> {
+    let post_query = conn.query(SELELCT_POST_BY_ID, &[&id]).unwrap();
+    if post_query.len() == 0 {
+        return Err(404);
+    }
+
+    let mut post: Post = empty_post();
+    for row in &post_query {
+        post = read_post(&row);
+    }
+
+
+    match json_post.message {
+        Some(ref message) => {
+            if &post.message != message {
+                conn.execute(UPDATE_POST, &[&message, &id]).unwrap();
+                let q = conn.query(SELELCT_POST_BY_ID, &[&id]).unwrap();
+                post.set_message(message.to_string());
+                post.set_is_edited();
+            }
+        }
+        None => {}
+    }
+    return Ok(post);
 }
 
 pub fn count(conn: &PostgresConnection) -> i32 {

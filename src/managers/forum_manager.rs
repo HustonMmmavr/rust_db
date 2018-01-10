@@ -27,7 +27,7 @@ pub fn create_forum(forum: & Forum, conn: &PostgresConnection) -> Result<Forum, 
 }
 
 pub fn get_forum(slug: &str, conn: &PostgresConnection)  -> Result<Forum, i32> {
-    let query = conn.query(f_q::get_forum, &[&slug]).unwrap();
+    let query = conn.query(f_q::GET_FORUM, &[&slug]).unwrap();
     if (query.len() == 0) {
         return Err(404);
     }

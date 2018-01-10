@@ -35,6 +35,19 @@ pub fn find_user_id_and_nick(nick: &String, conn: &PostgresConnection) -> Result
     return Ok((u_name, u_id));
 }
 
+pub fn get_usr_by_nick(nick: &str, conn: &PostgresConnection) -> Result<User, i32> {
+    let user_query = conn.query(u_q::search_user, &[&nick]).unwrap();
+    if user_query.len() == 0 {
+        return Err(404);
+    }
+
+    let mut user: User = empty_user();
+    for row in &user_query {
+        user = read_user(&row);
+    }
+    return Ok(user);
+}
+
 pub fn count(conn: &PostgresConnection) -> i32 {
     let query = conn.query("SELECT COUNT(*) FROM userprofiles", &[]).unwrap();
     let mut cnt: i32 = 0;

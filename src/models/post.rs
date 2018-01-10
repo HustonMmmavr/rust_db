@@ -1,8 +1,11 @@
 use postgres::rows::Row;
+use postgres;
+use postgres::types::{TIMESTAMPTZ};
 #[macro_use]
 use serde_derive;
 use serde_json;
 use chrono;
+
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct JsonPost {
@@ -46,21 +49,51 @@ pub struct DbPost {
     pub created: chrono::DateTime<chrono::Utc>,
 }
 
-use user::{ User};
-use forum::{ Forum};
-use thread::{ Thread};
+use models::user::{ User};
+use models::forum::{ Forum};
+use models::thread::{ Thread};
 
 #[derive(Serialize, Debug, Clone)]
 pub struct PostDetails {
-    pub user: Option<User>,
+    pub author: Option<User>,
     pub forum: Option<Forum>,
     pub thread: Option<Thread>,
     pub post: Option<Post>
 }
 
+impl PostDetails {
+    pub fn set_user (&mut self, author: User) {
+        self.author = Some(author);
+    }
+
+    pub fn set_post(& mut self, post: Post) {
+        self.post = Some(post);
+    }
+
+    pub fn set_thread(&mut self, thread: Thread) {
+        self.thread = Some(thread);
+    }
+
+    pub fn set_forum(&mut self, forum: Forum) {
+        self.forum = Some(forum);
+    }
+}
+
+pub fn empty_post_details() -> PostDetails {
+    return PostDetails{thread: None, author: None, post: None, forum: None};
+}
+
 impl Post {
     pub fn set_parent(&mut self, parent: &i32) {
         self.parent = parent.clone();
+    }
+
+    pub fn set_message(&mut self, message: String) {
+        self.message = message;
+    }
+
+    pub fn set_is_edited (&mut self) {
+        self.isEdited = true;
     }
 }
 
@@ -69,6 +102,24 @@ impl DbPost {
         self.parent = parent.clone();
     }
 }
+
+pub fn read_post(row: &Row) -> Post {
+    let data = row.get_bytes("created").unwrap();
+    let tz: chrono::DateTime<chrono::Utc> = postgres::types::FromSql::from_sql(&TIMESTAMPTZ, data).unwrap();
+    let time = format!("{:?}", tz);
+    let id: i32 = row.get("id");
+    return Post {
+        id: id as i64,
+        author: row.get("author_name"),
+        message : row.get("message"),
+        forum :  row.get("forum_slug"),
+        thread  : row.get("thread_id"),
+        parent : row.get("parent_id"),
+        created: time,
+        isEdited : row.get("is_edited")
+    }
+}
+
 
 pub fn empty_post () -> Post {
     return Post{ id:0, author: String::new(),
