@@ -20,7 +20,7 @@ pub const UPDATE_POST: &'static str = "UPDATE posts SET message = $1 , is_edited
 pub const FLAT_OR_THREE_SORT: &'static str = "SELECT created, forum_slug, id, is_edited, message, parent_id, thread_id, author_name FROM posts WHERE thread_id = $1";
 
 pub const PARENT_TREE_SORT: &'static str = "SELECT created, forum_slug, id, is_edited, message, \
-parent_id, thread_id, author_name FROM posts WHERE path_to_post[0] IN (SELECT id FROM posts WHERE thread_id = $1\
+parent_id, thread_id, author_name FROM posts WHERE id_of_root IN (SELECT id FROM posts WHERE thread_id = $1 \
 AND parent_id = 0 ";
 
 //id SERIAL PRIMARY KEY,

@@ -228,7 +228,7 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
     let mut t_query;
     match from_str::<i32>(&slug) {
         Ok(val) => {
-            t_query = conn.query(SEARCH_THREAD, &[&val]).unwrap();
+            t_query = conn.query(t_q::search_thread_by_id, &[&val]).unwrap();
         },
         Err(_) => {
             t_query = conn.query(FIND_THREAD_ID_BY_SLUG, &[&slug]).unwrap();
@@ -259,7 +259,8 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
     args.push(Box::new(t_id));
 
     if since.len() > 0 {
-        args.push(Box::new(since.clone()));
+        let sinc: i32 = from_str(&since).unwrap();
+        args.push(Box::new(sinc));
     }
 
     if limit > 0 {
@@ -271,9 +272,11 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
     if sort == "flat" {
         query += FLAT_OR_THREE_SORT;
         if since.len() > 0 {
-            query += &format!("AND id = ${}", counter);
-            counter += 1;
+            query += " AND id ";
+//            counter += 1;
             query += sign_sort;
+            query += &format!("${}", counter);
+            counter += 1;
         }
 
         query += " ORDER BY id ";
@@ -302,7 +305,7 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
             query += " AND path_to_post ";//&format!("AND path_to_post = ${}", counter);
 //            counter += 1;
             query += sign_sort;
-            query += &format!("(SELECT path_to_post FROM posts WHERE id = ${})", counter);
+            query += &format!(" (SELECT path_to_post FROM posts WHERE id = ${}) ", counter);
             counter += 1;
         }
         query += " ORDER BY path_to_post ";
@@ -313,12 +316,29 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
         }
     }
 
+    //case "parent_tree" :
+//builder.append(QueryForPost.findPosts());
+//builder.append("WHERE id_of_root IN (SELECT id FROM posts WHERE thread_id = ? AND parent_id = 0 ");
+//if (since != null) {
+//builder.append(" AND path_to_post");
+//builder.append(signSort);
+//builder.append("(SELECT path_to_post FROM posts WHERE id = ?) ");
+//}
+//builder.append(" ORDER BY id ");
+//builder.append(sortOrder);
+//if (limit != null) {
+//builder.append(" LIMIT ?");
+//}
+//builder.append(")");
+//builder.append("ORDER BY path_to_post ");
+//builder.append(sortOrder);
+
     if sort == "parent_tree" {
         query += PARENT_TREE_SORT;
         if since.len() > 0 {
             query += " AND path_to_post ";
             query += sign_sort;
-            query += &format!("SELECT path_to_post FROM posts WHERE id = ${}", counter);
+            query += &format!(" (SELECT path_to_post FROM posts WHERE id = ${}) ", counter);
             counter += 1;
         }
         query += " ORDER BY id ";

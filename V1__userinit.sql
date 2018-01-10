@@ -166,9 +166,10 @@ $insert_posts_trigger$
     arr INTEGER[];
   BEGIN
       IF NEW.parent_id = 0 THEN
-       UPDATE posts SET path_to_post = array_append(NULL, NEW.id);
+       UPDATE posts SET path_to_post = array_append(NULL, NEW.id), id_of_root = NEW.id WHERE id = NEW.id;
       ELSE
-       UPDATE posts SET path_to_post = array_append((SELECT path_to_post from posts WHERE id = NEW.parent_id), NEW.id);
+        SELECT path_to_post from posts WHERE id = NEW.parent_id into arr;
+       UPDATE posts SET path_to_post = array_append(arr, NEW.id), id_of_root = arr[1] WHERE id = NEW.id;
       END IF;
 
 --       WHERE id = NEW.id;
