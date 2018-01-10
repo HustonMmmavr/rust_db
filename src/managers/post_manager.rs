@@ -125,106 +125,9 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresC
     return Ok(posts);
 }
 
-
-
-//public List<PostModel> findSorted(ThreadModel threadModel, Integer limit, Integer since, String sort, Boolean desc) {
-//List<Object> list = new ArrayList<>();
-//StringBuilder builder = new StringBuilder();
-//
-//list.add(threadModel.getId());
-//if (since != null) {
-//list.add(since);
-//}
-//if (limit != null) {
-//list.add(limit);
-//}
-//
-//if (sort == null)
-//sort = "flat";
-//
-//String sortOrder;
-//String signSort;
-//if (desc == Boolean.TRUE) {
-//sortOrder = " DESC ";
-//signSort = " < ";
-//}
-//else {
-//sortOrder = " ASC ";
-//signSort = " > ";
-//}
-//
-//switch (sort) {
-//case "flat" :
-//builder.append(QueryForPost.flatOrTreeposts());
-//if (since != null) {
-//builder.append(" AND id ");
-//builder.append(signSort + "? ");
-//}
-//builder.append(" ORDER BY id ");
-//builder.append(sortOrder);
-//if (limit != null) {
-//builder.append(" LIMIT ?");
-//}
-//break;
-//case "tree" :
-//builder.append(QueryForPost.flatOrTreeposts());
-//if (since != null) {
-//builder.append(" AND path_to_post");
-//builder.append(signSort);
-//builder.append("(SELECT path_to_post FROM posts WHERE id = ?)");
-//}
-//builder.append(" ORDER BY path_to_post ");
-//builder.append(sortOrder);
-//if (limit != null) {
-//builder.append(" LIMIT ?");
-//}
-//break;
-//case "parent_tree" :
-//builder.append(QueryForPost.findPosts());
-//builder.append("WHERE id_of_root IN (SELECT id FROM posts WHERE thread_id = ? AND parent_id = 0 ");
-//if (since != null) {
-//builder.append(" AND path_to_post");
-//builder.append(signSort);
-//builder.append("(SELECT path_to_post FROM posts WHERE id = ?) ");
-//}
-//builder.append(" ORDER BY id ");
-//builder.append(sortOrder);
-//if (limit != null) {
-//builder.append(" LIMIT ?");
-//}
-//builder.append(")");
-//builder.append("ORDER BY path_to_post ");
-//builder.append(sortOrder);
-//break;
-//default:
-//break;
-//}
-//return jdbcTemplate.query(builder.toString(), list.toArray(), _getPostModel);
-//}
-
-//
-//if since.len() > 0 {
-////        query += "AND _user.nickname ";
-////        query += if desc == true  {"< "} else {"> "};
-////        query += &format!("${}::CITEXT ", counter);
-////        counter+=1;
-//args.push(Box::new(since));
-//}
-//
-//query += "ORDER BY _user.nickname ";
-//query += if desc == true {"DESC "} else {" "};
-//let mut lim: i64 = 0;
-//if limit > 0 {
-//query += &format!("LIMIT ${}", counter);
-//lim = limit as i64;
-//args.push(Box::new(lim));
-//counter += 1;
-//}
-
 pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: String, conn: &PostgresConnection) -> Result<Vec<Post>, i32> {
     use queries::thread::{SEARCH_THREAD, FIND_THREAD_ID_BY_SLUG};
 
-//    let id: i32 = 0;
     let mut t_query;
     match from_str::<i32>(&slug) {
         Ok(val) => {
@@ -273,7 +176,6 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
         query += FLAT_OR_THREE_SORT;
         if since.len() > 0 {
             query += " AND id ";
-//            counter += 1;
             query += sign_sort;
             query += &format!("${}", counter);
             counter += 1;
@@ -288,22 +190,10 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
         }
     }
 
-    //builder.append(QueryForPost.flatOrTreeposts());
-//if (since != null) {
-//builder.append(" AND path_to_post");
-//builder.append(signSort);
-//builder.append("(SELECT path_to_post FROM posts WHERE id = ?)");
-//}
-//builder.append(" ORDER BY path_to_post ");
-//builder.append(sortOrder);
-//if (limit != null) {
-//builder.append(" LIMIT ?");
-
     if sort == "tree" {
         query += FLAT_OR_THREE_SORT;
         if since.len() > 0 {
             query += " AND path_to_post ";//&format!("AND path_to_post = ${}", counter);
-//            counter += 1;
             query += sign_sort;
             query += &format!(" (SELECT path_to_post FROM posts WHERE id = ${}) ", counter);
             counter += 1;
@@ -315,23 +205,6 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
             counter += 1;
         }
     }
-
-    //case "parent_tree" :
-//builder.append(QueryForPost.findPosts());
-//builder.append("WHERE id_of_root IN (SELECT id FROM posts WHERE thread_id = ? AND parent_id = 0 ");
-//if (since != null) {
-//builder.append(" AND path_to_post");
-//builder.append(signSort);
-//builder.append("(SELECT path_to_post FROM posts WHERE id = ?) ");
-//}
-//builder.append(" ORDER BY id ");
-//builder.append(sortOrder);
-//if (limit != null) {
-//builder.append(" LIMIT ?");
-//}
-//builder.append(")");
-//builder.append("ORDER BY path_to_post ");
-//builder.append(sortOrder);
 
     if sort == "parent_tree" {
         query += PARENT_TREE_SORT;

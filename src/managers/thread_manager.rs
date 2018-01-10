@@ -156,7 +156,7 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
         return Err(404);
     }
 
-    println!("aaa");
+//    println!("aaa");
 
     let mut f_id:i32  = 0;
     for row in &forum_query {

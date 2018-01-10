@@ -145,7 +145,7 @@ pub fn get_posts(request: &mut Request) -> IronResult<Response> {
         None => {}
     }
 
-    println!("{}",desc);
+//    println!("{}",desc);
 
     let mut since = String::new();
     match map.find(&["since"]) {
@@ -153,7 +153,7 @@ pub fn get_posts(request: &mut Request) -> IronResult<Response> {
         None => {}
     }
 
-    println!("{}", since);
+//    println!("{}", since);
 
     let mut sort = String::new();
     match map.find(&["sort"]) {
