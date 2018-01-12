@@ -30,7 +30,8 @@ pub struct Post {
     pub forum: String,
     pub thread: i32,
     pub parent: i32,
-    pub created: String,
+//    pub created: String,
+    pub created: chrono::DateTime<chrono::Utc>,
     pub isEdited: bool,
 }
 
@@ -103,11 +104,42 @@ impl DbPost {
     }
 }
 
+use time;
+
 pub fn read_post(row: &Row) -> Post {
     let data = row.get_bytes("created").unwrap();
-    let tz: chrono::DateTime<chrono::Utc> = postgres::types::FromSql::from_sql(&TIMESTAMPTZ, data).unwrap();
-    let time = format!("{:?}", tz);
-    println!("create {}", time);
+//    let tz: chrono::DateTime<chrono::Utc> =
+        let tz: chrono::DateTime<chrono::Utc> =  postgres::types::FromSql::from_sql(&TIMESTAMPTZ, data).unwrap();
+//    let time = time::strftime("%Y-%m-%dT%H:%M:%S.%f", tz);
+//    println!("{:?}", time);
+//    time = time.in_time_zone('Europe/Moscow')
+//    time -= time.utc_offset
+//    time = time.strftime("%Y-%m-%dT%H:%M:%S.%f").to_s
+//    created = time[0...-3] + "Z"
+//    # p time.utc_offset.to_s
+//    p time
+//    #
+//    # # zone = Time.use_zone('Europe/Moscow')
+//    # p '-------------------------------'
+//    # if created.tzinfo == nil
+//    # 	created = zone.localize(created)
+//    # end
+//    # p '----------------------------------'
+//    # time = created
+//    # time = time.in_time_zone('Europe/Moscow')
+//    # u_time = Time.utc(time)
+//    # time = time.strftime("%Y-%m-%dT%H:%M:%S.%f").to_s
+//    utc_str = time[0...-3] + "Z"
+//    let mut time: String = format!("{:?}", tz);
+//    let idx = time.len();
+//    time.remove(idx - 2);
+//    let idx = time.len();
+//
+//    time.remove(idx - 2);
+//    let idx = time.len();
+//
+//    time.remove(idx - 2);
+//    println!("create {}", time);
     let id: i32 = row.get("id");
     return Post {
         id: id as i64,
@@ -116,7 +148,7 @@ pub fn read_post(row: &Row) -> Post {
         forum :  row.get("forum_slug"),
         thread  : row.get("thread_id"),
         parent : row.get("parent_id"),
-        created: time,
+        created: tz,
         isEdited : row.get("is_edited")
     }
 }
@@ -128,6 +160,6 @@ pub fn empty_post () -> Post {
     forum :  String::new(),
     thread  : 0,
     parent : 0,
-    created: String::new(),
+    created: chrono::Utc::now(),
     isEdited : false}
 }

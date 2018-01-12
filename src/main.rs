@@ -24,7 +24,6 @@ use r2d2::{Pool, PooledConnection};
 mod queries;
 mod models;
 mod managers;
-//use std;
 #[macro_use]
 mod db;
 mod conf;
@@ -37,77 +36,50 @@ fn fill_route(router: &mut Router) {
     router.post("/api/user/:nickname/create",controllers::user::create_user, "user_create");
     router.get("/api/user/:nickname/profile", controllers::user::get_user, "get_user_profile");
     router.post("/api/user/:nickname/profile", controllers::user::update_user, "update_user");
-//    // ------------------ forum ---------------------------
+    // ------------------ forum ---------------------------
     router.post("/api/forum/create", controllers::forum::create, "forum_create");
     router.post("/api/forum/:slug/create", controllers::forum::create_thread, "create_thread");
     router.get("/api/forum/:slug/details", controllers::forum::get_forum, "get_forum");
     router.get("/api/forum/:slug/threads", controllers::forum::get_threads, "get_threads");
     router.get("/api/forum/:slug/users", controllers::forum::get_users, "get_users");
-//    // ---------------- post ------------------------------
-//    router.get("/api/post/:id/details", controllers::post::get_details, "get_details");
-//    router.post("/api/post/:id/details", controllers::post::set_details, "set_details");
+    // ---------------- thread ------------------------------
     router.post("/api/thread/:slug_or_id/create", controllers::thread::create_posts, "create_posts");
     router.get("/api/thread/:slug_or_id/details", controllers::thread::get_thread_, "get_thread");
     router.post("/api/thread/:slug_or_id/details", controllers::thread::update_thread_, "update_thread");
     router.post("/api/thread/:slug_or_id/vote", controllers::thread::vote_, "vote");
     router.get("/api/thread/:slug_or_id/posts", controllers::thread::get_posts, "get_posts");
-
+    // ---------------- post ------------------------------
     router.get("/api/post/:id/details", controllers::post::get_post_details, "get_post");
     router.post("/api/post/:id/details", controllers::post::set_post_details, "set_post");
-
+    // ---------------- service ----------------------------
     router.post("/api/service/clear", controllers::service::clear, "clear");
     router.get("/api/service/status", controllers::service::status, "status");
+}
 
+extern crate postgres_binary_copy;
+extern crate streaming_iterator;
+fn main() {
+    let mut uri = "postgres://mavr:951103@localhost/test4";
+    let mut router = Router::new();           // Alternative syntax:
+    fill_route(&mut router);
+    let mut chain = Chain::new(router);
 
-//    router.get("/api/forum/:slug/threads", controllers::forum::get_threads, "get_threads");
+    let manager = (PostgresConnectionManager::new(uri, TlsMode::None)).unwrap();
+    let pool = (r2d2::Pool::new(manager)).unwrap();
 
-//    // ---------------  thread -----------------
-    //router.get
+    chain.link_before(persistent::Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
+    chain.link(persistent::Read::<conf::DbPool>::both(pool));
+    chain.link_after(JsonResponseMiddleware::new());
+    Iron::new(chain).http("localhost:5000").unwrap();
 }
 
 
+//    let mut v: Vec<_> = Vec::new();
+//    v.push(5);
+//    v.push("sa".to_string());
+//    print!("{}", v);
+//    String user = "comp"
 
-//
-//use postgres::{Connection, TlsMode};
-//
-//struct Person {
-//    id: i32,
-//    name: String,
-//    data: Option<Vec<u8>>,
-//}
-//
-//fn main() {
-//    let conn = Connection::connect("postgres://mavr:951103@localhost:5432/test", TlsMode::None).unwrap();
-//    let conn = Connection::connect("postgres://mavr:951103@localhost:5432/test", TlsMode::None).unwrap();
-//    conn.prepare("IN");
-////    conn.execute("CREATE TABLE person (
-////                    id              SERIAL PRIMARY KEY,
-////                    name            VARCHAR NOT NULL,
-////                    data            BYTEA
-////                  )", &[]).unwrap();
-//}
-//        id: 0,
-//        name: "Steven".to_string(),
-//        data: None,
-//    };
-//    let b = conn.execute("Update person set name = 'b' WHERE name = 'Steven'",
-//                 &[]).unwrap();
-//    let query = &conn.query("SELECT id, name, data FROM person WHERE name='a'", &[]).unwrap();
-//    println!("{}", b);
-//    for row in &conn.query("SELECT id, name, data FROM person WHERE name='a'", &[]).unwrap() {
-//        let person = Person {
-//            id: row.get(0),
-//            name: row.get(1),
-//            data: row.get(2),
-//        };
-////        println!("Found person {}", person.name);
-//    }
-//
-//}
-
-//extern crate postgres;
-extern crate postgres_binary_copy;
-extern crate streaming_iterator;
 //
 //use postgres::{Connection, TlsMode};
 //use postgres::types::{ToSql, INT4, VARCHAR, TIMESTAMPTZ, };
@@ -159,22 +131,59 @@ extern crate streaming_iterator;
 //    }
 //}
 //
-fn main() {
-//    let mut v: Vec<_> = Vec::new();
-//    v.push(5);
-//    v.push("sa".to_string());
-//    print!("{}", v);
-//    String user = "comp"
-    let mut uri = "postgres://mavr:951103@localhost/test2";
-    let mut router = Router::new();           // Alternative syntax:
-    fill_route(&mut router);
-    let mut chain = Chain::new(router);
 
-    let manager = (PostgresConnectionManager::new(uri, TlsMode::None)).unwrap();
-    let pool = (r2d2::Pool::new(manager)).unwrap();
 
-    chain.link_before(persistent::Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
-    chain.link(persistent::Read::<conf::DbPool>::both(pool));
-    chain.link_after(JsonResponseMiddleware::new());
-    Iron::new(chain).http("localhost:5000").unwrap();
-}
+
+
+//
+//use postgres::{Connection, TlsMode};
+//
+//struct Person {
+//    id: i32,
+//    name: String,
+//    data: Option<Vec<u8>>,
+//}
+//
+//fn main() {
+//    let conn = Connection::connect("postgres://mavr:951103@localhost:5432/test", TlsMode::None).unwrap();
+//    let conn = Connection::connect("postgres://mavr:951103@localhost:5432/test", TlsMode::None).unwrap();
+//    conn.prepare("IN");
+////    conn.execute("CREATE TABLE person (
+////                    id              SERIAL PRIMARY KEY,
+////                    name            VARCHAR NOT NULL,
+////                    data            BYTEA
+////                  )", &[]).unwrap();
+//}
+//        id: 0,
+//        name: "Steven".to_string(),
+//        data: None,
+//    };
+//    let b = conn.execute("Update person set name = 'b' WHERE name = 'Steven'",
+//                 &[]).unwrap();
+//    let query = &conn.query("SELECT id, name, data FROM person WHERE name='a'", &[]).unwrap();
+//    println!("{}", b);
+//    for row in &conn.query("SELECT id, name, data FROM person WHERE name='a'", &[]).unwrap() {
+//        let person = Person {
+//            id: row.get(0),
+//            name: row.get(1),
+//            data: row.get(2),
+//        };
+////        println!("Found person {}", person.name);
+//    }
+//
+//}
+
+//extern crate postgres;
+
+
+
+
+//    router.get("/api/forum/:slug/threads", controllers::forum::get_threads, "get_threads");
+
+//    // ---------------  thread -----------------
+//router.get
+
+//    router.get("/api/post/:id/details", controllers::post::get_details, "get_details");
+//    router.post("/api/post/:id/details", controllers::post::set_details, "set_details");
+
+//use std;

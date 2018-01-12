@@ -112,6 +112,7 @@ pub fn get_thread(id: &i32, conn: &PostgresConnection) -> Result<Thread, i32> {
 
 pub fn get_thread_pool(id: &i32, pool: &PostgresPool) -> Result<Thread, i32> {
     let query = pool.get().unwrap().query(t_q::search_thread_by_id, &[id]).unwrap();
+//    println!("{:?}", query);
     if (query.len() == 0) {
         return Err(404);
     }
