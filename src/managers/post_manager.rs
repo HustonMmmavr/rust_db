@@ -36,6 +36,7 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresC
     let created: chrono::DateTime<Utc> = Utc::now();
     let mut posts: Vec<Post> = Vec::new();
 
+    // Search user by prepared
     let mut db_posts: Vec<DbPost> = Vec::new();
     for json_post in json_posts {
         let mut post: Post;

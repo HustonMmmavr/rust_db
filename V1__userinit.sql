@@ -160,28 +160,59 @@ CREATE TRIGGER insert_threads_trigger AFTER INSERT ON threads
 
 ------------------- TRIGGER FOR UPDATE posts ------------------------
 --  author_name = (SELECT nickname FROM userprofiles WHERE id = NEW.author_id),
+-- CREATE OR REPLACE FUNCTION insert_posts_func() RETURNS TRIGGER AS
+-- $insert_posts_trigger$
+--   DECLARE
+--     arr INTEGER[];
+--   BEGIN
+--       IF NEW.parent_id = 0 THEN
+--        UPDATE posts SET path_to_post = array_append(NULL, NEW.id), id_of_root = NEW.id WHERE id = NEW.id;
+--       ELSE
+--         SELECT path_to_post from posts WHERE id = NEW.parent_id into arr;
+--        UPDATE posts SET path_to_post = array_append(arr, NEW.id), id_of_root = arr[1] WHERE id = NEW.id;
+--       END IF;
+--
+-- --       WHERE id = NEW.id;
+--       UPDATE forums set posts = posts + 1 WHERE id = NEW.forum_id;
+--       INSERT INTO forums_and_users(user_id, forum_id) VALUES(NEW.author_id, NEW.forum_id);
+--     RETURN NULL;
+--   END;
+-- $insert_posts_trigger$ LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION insert_posts_func() RETURNS TRIGGER AS
 $insert_posts_trigger$
   DECLARE
     arr INTEGER[];
+    root INTEGER;
   BEGIN
       IF NEW.parent_id = 0 THEN
-       UPDATE posts SET path_to_post = array_append(NULL, NEW.id), id_of_root = NEW.id WHERE id = NEW.id;
+       SELECT array_append(NULL, NEW.id) into arr;
+       root = NEW.id;
       ELSE
-        SELECT path_to_post from posts WHERE id = NEW.parent_id into arr;
-       UPDATE posts SET path_to_post = array_append(arr, NEW.id), id_of_root = arr[1] WHERE id = NEW.id;
+        SELECT array_append((SELECT path_to_post from posts WHERE id = NEW.parent_id), NEW.id) into arr;
+        root = arr[1];
+--         SELECT path_to_post from posts WHERE id = NEW.parent_id into arr;
+--        UPDATE posts SET path_to_post = array_append(arr, NEW.id), id_of_root = arr[1] WHERE id = NEW.id;
       END IF;
-
+      NEW.path_to_post = arr;
+      NEW.id_of_root = root;
 --       WHERE id = NEW.id;
       UPDATE forums set posts = posts + 1 WHERE id = NEW.forum_id;
       INSERT INTO forums_and_users(user_id, forum_id) VALUES(NEW.author_id, NEW.forum_id);
-    RETURN NULL;
+    RETURN NEW;
   END;
 $insert_posts_trigger$ LANGUAGE plpgsql;
 --
+
 DROP TRIGGER IF EXISTS insert_posts_trigger ON posts;
-CREATE TRIGGER insert_posts_trigger AFTER INSERT ON posts
+CREATE TRIGGER insert_posts_trigger BEFORE INSERT ON posts
   FOR EACH ROW EXECUTE PROCEDURE insert_posts_func();
+
+
+-- DROP TRIGGER IF EXISTS insert_posts_trigger ON posts;
+-- CREATE TRIGGER insert_posts_trigger AFTER INSERT ON posts
+--   FOR EACH ROW EXECUTE PROCEDURE insert_posts_func();
 
 -- -------------------------------------------------------------------
 -- CREATE OR REPLACE FUNCTION create_or_update_vote(u_id integer, t_id integer, v integer)
