@@ -30,7 +30,7 @@ use managers::forum_manager::*;
 use managers::forum_manager as f_m;
 use managers::thread_manager as t_m;
 use models::thread::{Thread, JsonThread, empty_thread, copy_json_thread};
-
+use flame;
 
 pub fn create(request : &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
@@ -176,7 +176,11 @@ pub fn get_threads(request : &mut Request) -> IronResult<Response> {
     return Ok(resp);
 }
 
+use time;
 pub fn get_users(request : &mut Request) -> IronResult<Response> {
+//    flame::start("get_users");
+    let t1 = time::now();
+
     let mut resp = Response::new();
 
     let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
@@ -210,13 +214,17 @@ pub fn get_users(request : &mut Request) -> IronResult<Response> {
     match f_m::get_users(slug, limit, desc, since, &conn) {
         Ok(val) => {
             resp.set_mut(JsonResponse::json(val)).set_mut(status::Ok);
-            return Ok(resp);
         },
         Err(_) => {
             resp.set_mut(JsonResponse::json(ErrorMsg{message: "err"})).set_mut(status::NotFound);
-            return Ok(resp);
         }
     }
+
+    let t2 = time::now();
+    println!("get_users {}", t2 - t1);
+//    flame::end("get_users");
+    return Ok(resp);
+
 //    return Ok(resp);
 }
 

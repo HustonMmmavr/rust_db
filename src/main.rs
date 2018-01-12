@@ -13,6 +13,7 @@ extern crate iron_json_response as ijr;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
+extern crate flame;
 use ijr::{JsonResponseMiddleware, JsonResponse};
 
 use iron::prelude::*;
@@ -27,6 +28,7 @@ mod managers;
 #[macro_use]
 mod db;
 mod conf;
+
 mod controllers {pub mod user; pub mod forum; pub mod post; pub mod thread; pub mod service;}
 
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
@@ -163,7 +165,7 @@ fn main() {
 //    v.push("sa".to_string());
 //    print!("{}", v);
 //    String user = "comp"
-    let mut uri = "postgres://mavr:951103@localhost/test1";
+    let mut uri = "postgres://mavr:951103@localhost/test2";
     let mut router = Router::new();           // Alternative syntax:
     fill_route(&mut router);
     let mut chain = Chain::new(router);

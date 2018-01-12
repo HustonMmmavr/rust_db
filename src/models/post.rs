@@ -107,6 +107,7 @@ pub fn read_post(row: &Row) -> Post {
     let data = row.get_bytes("created").unwrap();
     let tz: chrono::DateTime<chrono::Utc> = postgres::types::FromSql::from_sql(&TIMESTAMPTZ, data).unwrap();
     let time = format!("{:?}", tz);
+    println!("create {}", time);
     let id: i32 = row.get("id");
     return Post {
         id: id as i64,

@@ -21,7 +21,7 @@ serde_derive = "*"
 serde_json = "*"
 iron-json-response = "*"
 time="*"
-
+flame="*"
 [dependencies.iron]
 version = "*"
 

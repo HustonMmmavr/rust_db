@@ -69,7 +69,9 @@ pub fn create_posts(request : &mut Request) -> IronResult<Response> {
         return Ok(resp);
     }
 
-    match p_m::create_posts(&thread, json_posts, &conn) {
+//    match p_m::create_posts(&thread, json_posts, &conn) {
+        match p_m::create_posts(&thread, json_posts, db_pool) {
+
         Ok(val) => {
             resp.set_mut(JsonResponse::json(val)).set_mut(status::Created);
             return Ok(resp);

@@ -4,7 +4,7 @@ use queries::thread as t_q;
 use models::thread::*;
 use models::forum::*;
 use models::user::*;
-use db::{PostgresConnection};
+use db::{PostgresConnection, PostgresPool};
 use std;
 use postgres;
 use postgres::Error;
@@ -27,44 +27,74 @@ use postgres::types::{ToSql, INT4, VARCHAR, TIMESTAMPTZ, INT4_ARRAY, TEXT };
 use managers::forum_manager as f_m;
 use managers::forum_manager::*;
 use queries::forum::*;
+use queries::user::GET_USER_ID_AND_NICK;
 use queries::post::*;
 use managers::user_manager::*;
 use managers::thread_manager::get_thread;
 use serde_json::from_str;
 
-pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresConnection) -> Result<Vec<Post>, i32> {
+
+pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresPool) -> Result<Vec<Post>, i32> {
     let created: chrono::DateTime<Utc> = Utc::now();
     let mut posts: Vec<Post> = Vec::new();
 
     // Search user by prepared
+    let conn = pool.get().unwrap();
+
+    let mut f_id:i32 = 0;
+    let query = conn.query(GET_FORUM_ID, &[&thread.forum]).unwrap();
+
+    for row in &query {
+        f_id = row.get("id");
+    }
+
+
+    let transaction = conn.transaction().unwrap();
+
+    let user_stmnt = transaction.prepare(GET_USER_ID_AND_NICK).unwrap();
+    let parent_stmt = transaction.prepare(GET_PARENT_DATA).unwrap();
+    let insert_post = transaction.prepare(INSERT_POST_BIG).unwrap();
+    let next_id = transaction.prepare(SELECT_NEXT_POST_ID).unwrap();
     let mut db_posts: Vec<DbPost> = Vec::new();
+
     for json_post in json_posts {
         let mut post: Post;
         let forum: String = thread.forum.to_string();
-        let u_id;
-        let u_name;
-        match  find_user_id_and_nick(&json_post.author.unwrap(), &conn) {
-            Ok(val) => {
-                let (name, id) = val;
-                u_name = name;
-                u_id = id;
-            },
-            Err(err) => {
-                return Err(404);
-            }
+        let mut  u_id = 0;
+        let mut u_name: String = String::new();
+        let u_query = user_stmnt.query(&[&json_post.author]).unwrap();
+        if u_query.len() == 0 {
+            return Err(404);
         }
+
+        for row in &u_query {
+            u_id = row.get(0);
+            u_name = row.get(1);
+        }
+//        for row in &
+//        {
+//            Ok(val) => {
+//
+//                let (name, id) = val;
+//                u_name = name;
+//                u_id = id;
+//            },
+//            Err(err) => {
+//                return Err(404);
+//            }
+//        }
 
         let mut p_id: i64 = 0;
-        for row in &conn.query(SELECT_NEXT_POST_ID, &[]).unwrap() {
+        for row in &next_id.query(&[]).unwrap() {//&conn.query(SELECT_NEXT_POST_ID, &[]).unwrap() {
             p_id = row.get(0);
         }
-
-        let mut f_id:i32 = 0;
-        let query = conn.query(GET_FORUM_ID, &[&thread.forum]).unwrap();
-
-        for row in &query {
-            f_id = row.get("id");
-        }
+//
+//        let mut f_id:i32 = 0;
+//        let query = conn.query(GET_FORUM_ID, &[&thread.forum]).unwrap();
+//
+//        for row in &query {
+//            f_id = row.get("id");
+//        }
 
         let message = json_post.message.unwrap();
 
@@ -81,7 +111,7 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresC
         if json_post.parent == None || json_post.parent == Some(0) {
         } else {
             let mut parent_thread_id: i32 = 0;
-            let query = conn.query(GET_PARENT_DATA, &[&json_post.parent]).unwrap();
+            let query = parent_stmt.query(&[&json_post.parent]).unwrap();//conn.query(GET_PARENT_DATA, &[&json_post.parent]).unwrap();
             if query.len() == 0 {
                 return Err(409);
             }
@@ -99,32 +129,135 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresC
 
         }
 
+        insert_post.execute(&[&(dbPst.id as i32), &dbPst.parent, &dbPst.author_id, &dbPst.author_name, &dbPst.forum_id, &dbPst.forum_slug,
+            &dbPst.created, &dbPst.message, &dbPst.thread]).unwrap();
+
         posts.push(pst);
-        db_posts.push(dbPst);
+//        db_posts.push(dbPst);
     }
 
-    let types = &[INT4, INT4, INT4, TEXT, INT4, TEXT, TIMESTAMPTZ, TEXT, INT4];
-    let mut data: Vec<Box<ToSql>> = vec![];
+    transaction.commit();
 
-    for db_post in db_posts {
-        data.push(Box::new(db_post.id as i32));
-        data.push(Box::new(db_post.parent));
-        data.push(Box::new(db_post.author_id));
-        data.push(Box::new(db_post.author_name));
-        data.push(Box::new(db_post.forum_id));
-        data.push(Box::new(db_post.forum_slug));
-        data.push(Box::new(db_post.created));
-        data.push(Box::new(db_post.message));
-        data.push(Box::new(db_post.thread));
-    }
 
-    let data = streaming_iterator::convert(data.into_iter()).map_ref(|v| &**v);
-    let mut reader = BinaryCopyReader::new(types, data);
-    let stmt = conn.prepare(COPY_POSTS).unwrap();
-    stmt.copy_in(&[], &mut reader).unwrap();
+//    let types = &[INT4, INT4, INT4, TEXT, INT4, TEXT, TIMESTAMPTZ, TEXT, INT4];
+//    let mut data: Vec<Box<ToSql>> = vec![];
+//
+//    for db_post in db_posts {
+//        data.push(Box::new(db_post.id as i32));
+//        data.push(Box::new(db_post.parent));
+//        data.push(Box::new(db_post.author_id));
+//        data.push(Box::new(db_post.author_name));
+//        data.push(Box::new(db_post.forum_id));
+//        data.push(Box::new(db_post.forum_slug));
+//        data.push(Box::new(db_post.created));
+//        data.push(Box::new(db_post.message));
+//        data.push(Box::new(db_post.thread));
+//    }
+//
+//    let data = streaming_iterator::convert(data.into_iter()).map_ref(|v| &**v);
+//    let mut reader = BinaryCopyReader::new(types, data);
+//    let stmt = conn.prepare(COPY_POSTS).unwrap();
+//    stmt.copy_in(&[], &mut reader).unwrap();
 
     return Ok(posts);
 }
+
+
+//
+//pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, conn: &PostgresConnection) -> Result<Vec<Post>, i32> {
+//    let created: chrono::DateTime<Utc> = Utc::now();
+//    let mut posts: Vec<Post> = Vec::new();
+//
+//    // Search user by prepared
+//    let mut db_posts: Vec<DbPost> = Vec::new();
+//    let user_stmnt =
+//    for json_post in json_posts {
+//        let mut post: Post;
+//        let forum: String = thread.forum.to_string();
+//        let u_id;
+//        let u_name;
+//        match  find_user_id_and_nick(&json_post.author.unwrap(), &conn) {
+//            Ok(val) => {
+//                let (name, id) = val;
+//                u_name = name;
+//                u_id = id;
+//            },
+//            Err(err) => {
+//                return Err(404);
+//            }
+//        }
+//
+//        let mut p_id: i64 = 0;
+//        for row in &conn.query(SELECT_NEXT_POST_ID, &[]).unwrap() {
+//            p_id = row.get(0);
+//        }
+//
+//        let mut f_id:i32 = 0;
+//        let query = conn.query(GET_FORUM_ID, &[&thread.forum]).unwrap();
+//
+//        for row in &query {
+//            f_id = row.get("id");
+//        }
+//
+//        let message = json_post.message.unwrap();
+//
+//        let mut pst = Post{ id: p_id, author: u_name.clone(),
+//            message: message.clone(), forum: thread.forum.to_string(), thread: thread.id,
+//            parent: 0, created: format!{"{:?}", created }, isEdited: false
+//        };
+//
+//        let mut dbPst = DbPost { id: p_id, author_id: u_id, author_name: u_name.clone(),
+//            message: message.clone(), forum_id: f_id, forum_slug: thread.forum.to_string(), thread: thread.id,
+//            parent: 0, created: created
+//        };
+//
+//        if json_post.parent == None || json_post.parent == Some(0) {
+//        } else {
+//            let mut parent_thread_id: i32 = 0;
+//            let query = conn.query(GET_PARENT_DATA, &[&json_post.parent]).unwrap();
+//            if query.len() == 0 {
+//                return Err(409);
+//            }
+//            for row in &query {
+//                parent_thread_id = row.get(0);
+//            }
+//
+//            if parent_thread_id != thread.id {
+//                return Err(409)
+//            }
+//
+//            let parent = json_post.parent.unwrap();
+//            pst.set_parent(&parent);
+//            dbPst.set_parent(&parent);
+//
+//        }
+//
+//        posts.push(pst);
+//        db_posts.push(dbPst);
+//    }
+//
+//    let types = &[INT4, INT4, INT4, TEXT, INT4, TEXT, TIMESTAMPTZ, TEXT, INT4];
+//    let mut data: Vec<Box<ToSql>> = vec![];
+//
+//    for db_post in db_posts {
+//        data.push(Box::new(db_post.id as i32));
+//        data.push(Box::new(db_post.parent));
+//        data.push(Box::new(db_post.author_id));
+//        data.push(Box::new(db_post.author_name));
+//        data.push(Box::new(db_post.forum_id));
+//        data.push(Box::new(db_post.forum_slug));
+//        data.push(Box::new(db_post.created));
+//        data.push(Box::new(db_post.message));
+//        data.push(Box::new(db_post.thread));
+//    }
+//
+//    let data = streaming_iterator::convert(data.into_iter()).map_ref(|v| &**v);
+//    let mut reader = BinaryCopyReader::new(types, data);
+//    let stmt = conn.prepare(COPY_POSTS).unwrap();
+//    stmt.copy_in(&[], &mut reader).unwrap();
+//
+//    return Ok(posts);
+//}
 
 pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: String, conn: &PostgresConnection) -> Result<Vec<Post>, i32> {
     use queries::thread::{SEARCH_THREAD, FIND_THREAD_ID_BY_SLUG};
