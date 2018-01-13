@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["HustonMavr <huston.mavr@gmail.com>"]
 
 [dependencies]
-hyper = "*"
+hyper = "0.10.7"
 futures = "0.1.14"
 hyper-router = "*"
 r2d2 = "0.8.2"
