@@ -53,6 +53,7 @@ RUN cargo build --release
 
 EXPOSE 5000
 
+ENV PGUSER mavr 
 ENV PGPASSWORD 951103
 CMD service postgresql start
 CMD cd $WORK

@@ -116,6 +116,7 @@ fn main() {
     chain.link_after(JsonResponseMiddleware::new());
     let listener = TcpListener::bind("0.0.0.0:5000").unwrap();
 
+    println!("here");
     Iron::new(chain).listen(TcpListenerNoDelay { listener: Arc::new(listener) },
                                iron::Protocol::http()).unwrap();
 }
