@@ -16,7 +16,12 @@ extern crate serde_json;
 extern crate flame;
 extern crate postgres_binary_copy;
 extern crate streaming_iterator;
-
+extern crate hyper;
+use hyper::header::{Protocol};
+use std::net::TcpListener;
+//use hyper::
+use std::io;
+use std::sync::Arc;
 use ijr::{JsonResponseMiddleware, JsonResponse};
 
 use iron::prelude::*;
@@ -64,6 +69,27 @@ fn fill_route(router: &mut Router) {
     router.get("/api/service/status", controllers::service::status, "status");
 }
 
+//
+//#[derive(Clone)]
+//struct TcpListenerNoDelay {
+//    listener: Arc<TcpListener>,
+//}
+//
+//impl NetworkListener for TcpListenerNoDelay {
+//    type Stream = HttpStream;
+//
+//    fn accept(&mut self) -> Result<Self::Stream, hyper::Error> {
+//        let tcp = try!(self.listener.accept());
+//        try!(tcp.0.set_nodelay(true));
+//        let stream = HttpStream(tcp.0);
+//        Ok(stream)
+//    }
+//
+//    fn local_addr(&mut self) -> io::Result<SocketAddr> {
+//        self.listener.local_addr()
+//    }
+//}
+
 
 fn main() {
     let mut uri = "postgres://mavr:951103@localhost/test4";
@@ -78,4 +104,8 @@ fn main() {
     chain.link(persistent::Read::<conf::DbPool>::both(pool));
     chain.link_after(JsonResponseMiddleware::new());
     Iron::new(chain).http("localhost:5000").unwrap();
+//    .listen(
+//        TcpListenerNoDelay { listener: Arc::new(listener) },
+//        Protocol::http(),
+//    ).
 }

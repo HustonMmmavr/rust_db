@@ -47,15 +47,21 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresP
         f_id = row.get("id");
     }
 
+    let mut insert_query: String = INSERT_POST_BIG.to_string();
+//    let values = "(${}, ${}, ${}, ${}::CITEXT, ${}, ${}::CITEXT, ${}, ${}, ${})";
+    let mut args: Vec<Box<ToSql>> = Vec::new();
+    let mut i = 0;
 
     let transaction = conn.transaction().unwrap();
     let user_stmnt = transaction.prepare(GET_USER_ID_AND_NICK).unwrap();
     let parent_stmt = transaction.prepare(GET_PARENT_DATA).unwrap();
-    let insert_post = transaction.prepare(INSERT_POST_BIG).unwrap();
+//    let insert_post = transaction.prepare(INSERT_POST_BIG).unwrap();
     let next_id = transaction.prepare(SELECT_NEXT_POST_ID).unwrap();
     let mut db_posts: Vec<DbPost> = Vec::new();
-
+//    let
     for json_post in json_posts {
+        insert_query += &format!(" (${}, ${}, ${}, ${}::CITEXT, ${}, ${}::CITEXT, ${}, ${}, ${}),", i + 1, i+ 2, i+ 3, i+4, i+5, i+6, i+7, i+8, i+9);
+        i += 9;
         let mut post: Post;
         let forum: String = thread.forum.to_string();
         let mut  u_id = 0;
@@ -83,11 +89,12 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresP
         };
 
 
-        let mut dbPst = DbPost { id: p_id, author_id: u_id, author_name: u_name.clone(),
-            message: message.clone(), forum_id: f_id, forum_slug: thread.forum.to_string(), thread: thread.id,
-            parent: 0, created: created
-        };
+//        let mut dbPst = DbPost { id: p_id, author_id: u_id, author_name: u_name.clone(),
+//            message: message.clone(), forum_id: f_id, forum_slug: thread.forum.to_string(), thread: thread.id,
+//            parent: 0, created: created
+//        };
 
+        let mut parent: i32 = 0;
         if json_post.parent == None || json_post.parent == Some(0) {
         } else {
             let mut parent_thread_id: i32 = 0;
@@ -103,17 +110,55 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresP
                 return Err(409)
             }
 
-            let parent = json_post.parent.unwrap();
+            parent = json_post.parent.unwrap();
             pst.set_parent(&parent);
-            dbPst.set_parent(&parent);
+//            dbPst.set_parent(&parent);
         }
 
+        args.push(Box::new(p_id as i32));
+        args.push(Box::new(parent));
+        args.push(Box::new(u_id));
+        args.push(Box::new(json_post.author.clone()));
+        args.push(Box::new(f_id));
+        args.push(Box::new(thread.forum.to_string()));
+        args.push(Box::new(created));
+        args.push(Box::new(message));
+        args.push(Box::new(thread.id));
 
-        insert_post.execute(&[&(dbPst.id as i32), &dbPst.parent, &dbPst.author_id, &dbPst.author_name, &dbPst.forum_id, &dbPst.forum_slug,
-            &dbPst.created, &dbPst.message, &dbPst.thread]).unwrap();
+
+//        data.push(Box::new(db_post.id as i32));
+//        data.push(Box::new(db_post.parent));
+//        data.push(Box::new(db_post.author_id));
+//        data.push(Box::new(db_post.author_name));
+//        data.push(Box::new(db_post.forum_id));
+//        data.push(Box::new(db_post.forum_slug));
+//        data.push(Box::new(db_post.created));
+//        data.push(Box::new(db_post.message));
+//        data.push(Box::new(db_post.thread));
+//        data.push(Box::new(db_post.id as i32));
+//        data.push(Box::new(db_post.parent));
+//        data.push(Box::new(db_post.author_id));
+//        data.push(Box::new(db_post.author_name));
+//        data.push(Box::new(db_post.forum_id));
+//        data.push(Box::new(db_post.forum_slug));
+//        data.push(Box::new(db_post.created));
+//        data.push(Box::new(db_post.message));
+//        data.push(Box::new(db_post.thread));
+
+//
+//        insert_post.execute(&[&(dbPst.id as i32), &dbPst.parent, &dbPst.author_id, &dbPst.author_name, &dbPst.forum_id, &dbPst.forum_slug,
+//            &dbPst.created, &dbPst.message, &dbPst.thread]).unwrap();
 
         posts.push(pst);
     }
+
+    insert_query.pop();
+
+    println!("{}", insert_query);
+    let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();//args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
+
+    let stmt = transaction.prepare(&insert_query).unwrap();
+    stmt.execute(&binds_borrowed);
 
 //    let types = &[INT4, INT4, INT4, TEXT, INT4, TEXT, TIMESTAMPTZ, TEXT, INT4];
 //    let mut data: Vec<Box<ToSql>> = vec![];

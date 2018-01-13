@@ -8,7 +8,7 @@ pub const GET_PARENT_DATA: &'static str = "SELECT thread_id FROM posts WHERE id 
 
 pub const INSERT_POST_BIG: &'static str = "INSERT INTO posts (id, parent_id, author_id, author_name, forum_id,\
  forum_slug, created, message, thread_id)\
-VALUES($1, $2, $3, $4::CITEXT, $5, $6::CITEXT, $7, $8, $9)";
+VALUES ";//($1, $2, $3, $4::CITEXT, $5, $6::CITEXT, $7, $8, $9)";
 
 pub const UPDATE_POST: &'static str = "UPDATE posts SET message = $1 , is_edited = true WHERE id = $2";
 

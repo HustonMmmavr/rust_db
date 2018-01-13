@@ -301,8 +301,6 @@ pub fn vote(vote_mod: Vote, slug: String, conn: &PostgresConnection) -> Result<T
         t_id = row.get(0);
     }
 
-
-
     match conn.execute(CREATE_OR_UPDATE_VOTE, &[&u_id, &t_id, &vote_mod.voice]) {
         Ok(val) => {
             let thread_quer = conn.query(search_thread_by_id, &[&t_id]).unwrap();
