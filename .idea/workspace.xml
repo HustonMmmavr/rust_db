@@ -5,17 +5,7 @@
     <bookmark url="file://$PROJECT_DIR$/src/managers/thread_manager.rs" line="248" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f920085-0d42-4e24-83bc-22997e8e7cec" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" afterPath="$PROJECT_DIR$/Cargo.lock" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" afterPath="$PROJECT_DIR$/Cargo.toml" />
-      <change beforePath="$PROJECT_DIR$/V1__userinit.sql" afterPath="$PROJECT_DIR$/V1__userinit.sql" />
-      <change beforePath="$PROJECT_DIR$/doc" afterPath="$PROJECT_DIR$/doc" />
-      <change beforePath="$PROJECT_DIR$/src/controllers/forum.rs" afterPath="$PROJECT_DIR$/src/controllers/forum.rs" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" afterPath="$PROJECT_DIR$/src/main.rs" />
-      <change beforePath="$PROJECT_DIR$/src/managers/post_manager.rs" afterPath="$PROJECT_DIR$/src/managers/post_manager.rs" />
-      <change beforePath="$PROJECT_DIR$/src/queries/forum.rs" afterPath="$PROJECT_DIR$/src/queries/forum.rs" />
-    </list>
+    <list default="true" id="6f920085-0d42-4e24-83bc-22997e8e7cec" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -431,12 +421,12 @@
       <workItem from="1515692503565" duration="3125000" />
       <workItem from="1515753029408" duration="14287000" />
       <workItem from="1515771483317" duration="8519000" />
-      <workItem from="1515853221210" duration="9863000" />
+      <workItem from="1515853221210" duration="9917000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="216556000" />
+    <option name="totallyTimeSpent" value="216610000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="1053" extended-state="6" />

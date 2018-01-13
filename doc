@@ -41,9 +41,11 @@ ADD src/ $WORK/src/
 ADD V1__userinit.sql $WORK/schema.sql
 ADD install.sh $WORK/install.sh
 
-RUN chmod +x install.sh && ./install.sh && rm install.sh
 
 WORKDIR $WORK
+
+RUN chmod +x install.sh && ./install.sh && rm install.sh
+
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 RUN cargo build --release
