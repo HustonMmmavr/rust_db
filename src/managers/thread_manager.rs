@@ -112,7 +112,6 @@ pub fn get_thread(id: &i32, conn: &PostgresConnection) -> Result<Thread, i32> {
 
 pub fn get_thread_pool(id: &i32, pool: &PostgresPool) -> Result<Thread, i32> {
     let query = pool.get().unwrap().query(t_q::search_thread_by_id, &[id]).unwrap();
-//    println!("{:?}", query);
     if (query.len() == 0) {
         return Err(404);
     }
@@ -161,7 +160,7 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
 
     let mut f_id:i32  = 0;
     for row in &forum_query {
-        f_id = row.get(0);//"id")
+        f_id = row.get(0);
     }
 
     let mut query = String::new();
@@ -178,7 +177,6 @@ pub fn get_threads(slug: &str, limit: i32, desc: bool, since: String,
         query += if desc == true  {"<= "} else {">= "};
         query += &format!("${}::TIMESTAMPTZ ", counter);
         counter+=1;
-//        } else {"=> ?::TIMESTAMPTZ "};
         created = chrono::DateTime::<Utc>::from_str(&since).unwrap();
         args.push(Box::new(created));
     }
@@ -274,7 +272,6 @@ pub fn update_thread(slug: &String, json_thread: &JsonThreadUpdate, conn: &Postg
 
 pub fn vote(vote_mod: Vote, slug: String, conn: &PostgresConnection) -> Result<Thread, i32> {
     let u_id_query = conn.query(get_user_id, &[&vote_mod.nickname]).unwrap();
-//    println!("{:?}", u_id_query);
     if u_id_query.len() == 0 {
         return Err(404);
     }
@@ -289,14 +286,11 @@ pub fn vote(vote_mod: Vote, slug: String, conn: &PostgresConnection) -> Result<T
     match from_str::<i32>(&slug) {
         Ok(val) => {
             t_id_query = conn.query(FIND_THREAD_ID, &[&val]).unwrap();
-//            id = val;.
         }
         Err(e) => {
             t_id_query = conn.query(FIND_THREAD_ID_BY_SLUG, &[&slug]).unwrap();
-//            id = -1;
         }
     }
-//    println!("{:?}", t_id_query);
 
     if t_id_query.len() == 0 {
         return Err(404);
@@ -337,75 +331,3 @@ pub fn clear(conn: &PostgresConnection) -> i32 {
     let query = conn.query("DELETE FROM threads", &[]).unwrap();
     return 0;
 }
-
-//fn print_type_of<T>(_: &T) {
-//    println!("{}", unsafe { std::intrinsics::type_name::<T>() });
-//}
-
-//    let forum_id: INT4 = f_id;
-
-//    let mut args: Vec<&str> = Vec::new();
-
-//    let mut desc = false;
-//    match _desc {
-//        &Some(val) => desc = serde_json::from_str(&val).unwrap(),
-//        &None => {}
-//    }
-
-//    let
-
-//    values.push(Box::new(sensor_id));
-//    values.push(Box::new(datetime));
-
-//    let f_id: i32 = 0;
-
-//    match since {
-//        &Some(val) => {
-//            query += "AND created ";
-//            query += if desc == true  {"<= "} else {">= "};
-//            query += &format!("${}::TIMESTAMPTZ ", counter);
-//            counter+=1;
-////        } else {"=> ?::TIMESTAMPTZ "};
-//            created = chrono::DateTime::<Utc>::from_str(&val).unwrap();
-//            args.push(Box::new(created));
-//        }
-//        &None => {}
-//    }
-
-//    let mut created: chrono::DateTime<Utc>;
-//    match since {
-//        Some(val) => //created =
-//    }
-//    match
-
-//    let binds_borrowed = args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
-//    println!("{}", query);
-//    match conn.query(&query, &[&2000i32, &4i64]) {
-//        Ok(_) => {}
-//        Err(e) => println!("{:?}", e)
-//    }
-//    if query_rows.len() == 0 {
-//        return Err(404);
-//    }
-//
-
-//    println!("{:?}", binds_borrowed);
-//    println!("{}", query);
-
-//    let mut lim: i32 = 0;
-//    query += "ORDER BY created ";
-//    query += if desc == true {"DESC "} else {" "};
-//    match limit {
-//        &Some(val) => {
-//            query += &format!("LIMIT ${}", counter);
-//            lim = serde_json::from_str(&val).unwrap();
-//            args.push(Box::new(lim));
-//            counter += 1;
-//        },
-//        &None => {}
-//    }
-
-//    println!("{}", query);
-//    for arg in &args {
-//        print_type_of(arg);
-//    }

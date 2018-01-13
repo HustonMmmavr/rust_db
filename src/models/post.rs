@@ -108,38 +108,7 @@ use time;
 
 pub fn read_post(row: &Row) -> Post {
     let data = row.get_bytes("created").unwrap();
-//    let tz: chrono::DateTime<chrono::Utc> =
-        let tz: chrono::DateTime<chrono::Utc> =  postgres::types::FromSql::from_sql(&TIMESTAMPTZ, data).unwrap();
-//    let time = time::strftime("%Y-%m-%dT%H:%M:%S.%f", tz);
-//    println!("{:?}", time);
-//    time = time.in_time_zone('Europe/Moscow')
-//    time -= time.utc_offset
-//    time = time.strftime("%Y-%m-%dT%H:%M:%S.%f").to_s
-//    created = time[0...-3] + "Z"
-//    # p time.utc_offset.to_s
-//    p time
-//    #
-//    # # zone = Time.use_zone('Europe/Moscow')
-//    # p '-------------------------------'
-//    # if created.tzinfo == nil
-//    # 	created = zone.localize(created)
-//    # end
-//    # p '----------------------------------'
-//    # time = created
-//    # time = time.in_time_zone('Europe/Moscow')
-//    # u_time = Time.utc(time)
-//    # time = time.strftime("%Y-%m-%dT%H:%M:%S.%f").to_s
-//    utc_str = time[0...-3] + "Z"
-//    let mut time: String = format!("{:?}", tz);
-//    let idx = time.len();
-//    time.remove(idx - 2);
-//    let idx = time.len();
-//
-//    time.remove(idx - 2);
-//    let idx = time.len();
-//
-//    time.remove(idx - 2);
-//    println!("create {}", time);
+    let tz: chrono::DateTime<chrono::Utc> =  postgres::types::FromSql::from_sql(&TIMESTAMPTZ, data).unwrap();
     let id: i32 = row.get("id");
     return Post {
         id: id as i64,

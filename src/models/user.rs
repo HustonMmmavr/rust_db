@@ -34,7 +34,6 @@ pub fn empty_user() -> User {
 }
 
 pub fn copy_user(user : &mut User, other:  JsonUser) {
-//    user.nickname = other.nickname;
     user.email = other.email.unwrap();
     user.about = other.about.unwrap();
     user.fullname = other.fullname.unwrap();

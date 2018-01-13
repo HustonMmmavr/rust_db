@@ -107,7 +107,6 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
         _ => panic!("No body")
     }
 
-//    println!("{:?}", dbThread);
     match t_m::create_thread_pool(&mut dbThread, &db_pool) {
         Ok(val) => {
             resp.set_mut(JsonResponse::json(val)).set_mut(status::Created);
@@ -120,8 +119,6 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
             }
             else {
                 let slugg = dbThread.slug.unwrap().to_string();
-
-//                let existing_thread = t_m::get_thread_by_slug(&slugg, &conn).unwrap();
                 let existing_thread = t_m::get_thread_by_slug_pool(&slugg, &db_pool).unwrap();
 
                 resp.set_mut(JsonResponse::json(existing_thread)).set_mut(status::Conflict);
@@ -178,7 +175,6 @@ pub fn get_threads(request : &mut Request) -> IronResult<Response> {
 
 use time;
 pub fn get_users(request : &mut Request) -> IronResult<Response> {
-//    flame::start("get_users");
     let t1 = time::now();
 
     let mut resp = Response::new();
@@ -222,47 +218,5 @@ pub fn get_users(request : &mut Request) -> IronResult<Response> {
 
     let t2 = time::now();
     println!("get_users {}", t2 - t1);
-//    flame::end("get_users");
     return Ok(resp);
-
-//    return Ok(resp);
 }
-
-//    let limit;
-//    let desc;
-//    let since;
-
-
-//    println!("{}", limit);
-
-//    match request.get_ref::<Params>() {
-//        Ok(map) => {
-//            limit = map.find(&["limit"]).clone();
-//            desc = map.find(&["desc"]).clone();
-//            since = map.find(&["since"]).clone();
-//            println!("{:?}", limit);
-//            println!("{:?}", desc);
-//            println!("{:?}", since);
-////            limit =l;// [);
-////            desc = d;//map.find();
-////            since = s;//map.find("since");
-//        },
-//        Err(_) => {}
-
-
-//            limit = l;
-//            println!("{:?}", l);
-//            limit =l;// [);
-//            desc = d;//map.find();
-//            since = s;//map.find("since");
-//        },
-//        Err(_) => {}
-//    }
-//    let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
-//    let conn = db_pool.get().unwrap();
-//
-//    let ref slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap_or("/");
-//    match f_m::get_users(slug, &conn) {
-//        Ok(val) => println!("{:?}", val),
-//        Err(_) => println!("nnn")
-//    }

@@ -30,21 +30,15 @@ use models::status::*;
 
 pub fn clear(request: &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
-//    println!("here");
-
     let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
     let conn = db_pool.get().unwrap();
     conn.execute(DELETE, &[]).unwrap();
-//    let mut forum = request.get::<bodyparser::Struct<JsonForum>>();
-//    let mut dbForum = empty_forum();
     resp.set_mut(JsonResponse::json(ErrorMsg{message: {"Ok"}})).set_mut(status::Ok);
     return Ok(resp);
 }
 
 pub fn status(request: &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
-//    println!("here");
-
     let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
     let conn = db_pool.get().unwrap();
     let mut status: Status = empty_status();
@@ -55,8 +49,6 @@ pub fn status(request: &mut Request) -> IronResult<Response> {
         status.set_thread(row.get("thread"));
         status.set_post(row.get("post"));
     }
-//    let mut forum = request.get::<bodyparser::Struct<JsonForum>>();
-//    let mut dbForum = empty_forum();
     resp.set_mut(JsonResponse::json(status)).set_mut(status::Ok);
     return Ok(resp);
 }
