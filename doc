@@ -33,7 +33,7 @@ EXPOSE 5432
 VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 
-ENV USER root
+USER root
 
 # Копируем исходный код в Docker-контейнер
 ENV WORK /opt/rust_db
