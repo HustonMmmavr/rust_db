@@ -19,6 +19,11 @@ extern crate streaming_iterator;
 extern crate hyper;
 use hyper::header::{Protocol};
 use std::net::TcpListener;
+use hyper::net::NetworkListener;
+use std::net::SocketAddr;
+use hyper::net::HttpStream;
+//use hyper::httparse::{HttpStream};
+//use hyper::net;
 //use hyper::
 use std::io;
 use std::sync::Arc;
@@ -27,9 +32,11 @@ use ijr::{JsonResponseMiddleware, JsonResponse};
 use iron::prelude::*;
 use iron::status;
 use router::Router;
+//use hyper;
 use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 use r2d2::{Pool, PooledConnection};
 mod queries;
+//mod hyper::net;
 mod models;
 mod managers;
 #[macro_use]
@@ -70,29 +77,29 @@ fn fill_route(router: &mut Router) {
 }
 
 //
-//#[derive(Clone)]
-//struct TcpListenerNoDelay {
-//    listener: Arc<TcpListener>,
-//}
-//
-//impl NetworkListener for TcpListenerNoDelay {
-//    type Stream = HttpStream;
-//
-//    fn accept(&mut self) -> Result<Self::Stream, hyper::Error> {
-//        let tcp = try!(self.listener.accept());
-//        try!(tcp.0.set_nodelay(true));
-//        let stream = HttpStream(tcp.0);
-//        Ok(stream)
-//    }
-//
-//    fn local_addr(&mut self) -> io::Result<SocketAddr> {
-//        self.listener.local_addr()
-//    }
-//}
+#[derive(Clone)]
+struct TcpListenerNoDelay {
+    listener: Arc<TcpListener>,
+}
+
+impl NetworkListener for TcpListenerNoDelay {
+    type Stream = HttpStream;
+
+    fn accept(&mut self) -> Result<Self::Stream, hyper::Error> {
+        let tcp = try!(self.listener.accept());
+        try!(tcp.0.set_nodelay(true));
+        let stream = HttpStream(tcp.0);
+        Ok(stream)
+    }
+
+    fn local_addr(&mut self) -> io::Result<SocketAddr> {
+        self.listener.local_addr()
+    }
+}
 
 
 fn main() {
-    let mut uri = "postgres://mavr:951103@localhost/test4";
+    let mut uri = "postgres://mavr:951103@localhost/test5";
     let mut router = Router::new();           // Alternative syntax:
     fill_route(&mut router);
     let mut chain = Chain::new(router);
@@ -103,9 +110,8 @@ fn main() {
     chain.link_before(persistent::Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
     chain.link(persistent::Read::<conf::DbPool>::both(pool));
     chain.link_after(JsonResponseMiddleware::new());
-    Iron::new(chain).http("localhost:5000").unwrap();
-//    .listen(
-//        TcpListenerNoDelay { listener: Arc::new(listener) },
-//        Protocol::http(),
+//    let listener = TcpListener::bind("127.0.0.1:5000").unwrap();
+    Iron::new(chain).http("localhost:5000").unwrap();//listen(TcpListenerNoDelay { listener: Arc::new(listener) },
+    //    Protocol::Http).unwrap();
 //    ).
 }

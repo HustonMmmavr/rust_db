@@ -1,9 +1,8 @@
 FROM ubuntu:17.04
-
-
 #
 # Установка postgresql
 #
+
 RUN apt-get -y update
 
 ENV PGVER 9.6
@@ -15,8 +14,8 @@ USER postgres
 # Create a PostgreSQL role named ``docker`` with ``docker`` as the password and
 # then create a database `docker` owned by the ``docker`` role.
 RUN /etc/init.d/postgresql start &&\
-    psql --command "CREATE USER docker WITH SUPERUSER PASSWORD 'docker';" &&\
-    createdb -E UTF8 -T template0 -O docker docker &&\
+    psql --command "CREATE USER mavr WITH SUPERUSER PASSWORD '951103';" &&\
+    createdb -E UTF8 -T template0 -O mavr 951103 &&\
     /etc/init.d/postgresql stop
 
 # Adjust PostgreSQL configuration so that remote connections to the
@@ -36,11 +35,10 @@ VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 ENV USER root
 
-
 # Копируем исходный код в Docker-контейнер
 ENV WORK /opt/rust_db
 ADD src/ $WORK/src/
-ADD schema.sql $WORK/V1__userinit.sql
+ADD V1__userinit.sql $WORK/schema.sql
 ADD install.sh $WORK/install.sh
 
 RUN chmod +x install.sh && ./install.sh && rm install.sh
@@ -52,6 +50,6 @@ RUN cargo build --release
 
 EXPOSE 5000
 
-ENV PGPASSWORD docker
+ENV PGPASSWORD 951103
 CMD service postgresql start &&\
     cd $WORK/ && psql -h localhost -U docker -d docker -f schema.sql && ./target/release/RustDb

@@ -326,5 +326,50 @@ LANGUAGE plpgsql;
 -- --     END IF;
 -- --   END;'
 -- -- LANGUAGE plpgsql;
+--         SELECT path_to_post from posts WHERE id = NEW.parent_id into arr;
+--        UPDATE posts SET path_to_post = array_append(arr, NEW.id), id_of_root = arr[1] WHERE id = NEW.id;
 
---------------------------------------------
+
+
+
+------------------- TRIGGER FOR UPDATE threads ---------------
+
+/*CREATE OR REPLACE FUNCTION insert_threads_func() RETURNS TRIGGER AS
+$insert_threads_trigger$
+  BEGIN
+      UPDATE threads SET author_name = (SELECT nickname FROM userprofiles WHERE id = NEW.author_id),
+                      forum_slug = (SELECT slug FROM forums WHERE id = NEW.forum_id)
+      WHERE id = NEW.id;
+      UPDATE forums SET threads = threads + 1 WHERE id = NEW.forum_id;
+       INSERT INTO forums_and_users(user_id, forum_id) VALUES(NEW.author_id, NEW.forum_id);
+    RETURN NULL;
+  END;
+$insert_threads_trigger$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS insert_threads_trigger ON threads;
+CREATE TRIGGER insert_threads_trigger AFTER INSERT ON threads
+  FOR EACH ROW EXECUTE PROCEDURE insert_threads_func();*/
+
+-------------------------------------------------------------------
+
+
+------------------- TRIGGER FOR UPDATE posts ------------------------
+--  author_name = (SELECT nickname FROM userprofiles WHERE id = NEW.author_id),
+-- CREATE OR REPLACE FUNCTION insert_posts_func() RETURNS TRIGGER AS
+-- $insert_posts_trigger$
+--   DECLARE
+--     arr INTEGER[];
+--   BEGIN
+--       IF NEW.parent_id = 0 THEN
+--        UPDATE posts SET path_to_post = array_append(NULL, NEW.id), id_of_root = NEW.id WHERE id = NEW.id;
+--       ELSE
+--         SELECT path_to_post from posts WHERE id = NEW.parent_id into arr;
+--        UPDATE posts SET path_to_post = array_append(arr, NEW.id), id_of_root = arr[1] WHERE id = NEW.id;
+--       END IF;
+--
+-- --       WHERE id = NEW.id;
+--       UPDATE forums set posts = posts + 1 WHERE id = NEW.forum_id;
+--       INSERT INTO forums_and_users(user_id, forum_id) VALUES(NEW.author_id, NEW.forum_id);
+--     RETURN NULL;
+--   END;
+-- $insert_posts_trigger$ LANGUAGE plpgsql;

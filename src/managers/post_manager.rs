@@ -124,27 +124,6 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresP
         args.push(Box::new(created));
         args.push(Box::new(message));
         args.push(Box::new(thread.id));
-
-
-//        data.push(Box::new(db_post.id as i32));
-//        data.push(Box::new(db_post.parent));
-//        data.push(Box::new(db_post.author_id));
-//        data.push(Box::new(db_post.author_name));
-//        data.push(Box::new(db_post.forum_id));
-//        data.push(Box::new(db_post.forum_slug));
-//        data.push(Box::new(db_post.created));
-//        data.push(Box::new(db_post.message));
-//        data.push(Box::new(db_post.thread));
-//        data.push(Box::new(db_post.id as i32));
-//        data.push(Box::new(db_post.parent));
-//        data.push(Box::new(db_post.author_id));
-//        data.push(Box::new(db_post.author_name));
-//        data.push(Box::new(db_post.forum_id));
-//        data.push(Box::new(db_post.forum_slug));
-//        data.push(Box::new(db_post.created));
-//        data.push(Box::new(db_post.message));
-//        data.push(Box::new(db_post.thread));
-
 //
 //        insert_post.execute(&[&(dbPst.id as i32), &dbPst.parent, &dbPst.author_id, &dbPst.author_name, &dbPst.forum_id, &dbPst.forum_slug,
 //            &dbPst.created, &dbPst.message, &dbPst.thread]).unwrap();
@@ -154,7 +133,7 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresP
 
     insert_query.pop();
 
-    println!("{}", insert_query);
+//    println!("{}", insert_query);
     let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();//args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
 
     let stmt = transaction.prepare(&insert_query).unwrap();

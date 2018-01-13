@@ -93,7 +93,7 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
 
     let db_pool = &request.get::<persistent::Read<DbPool>>().unwrap();
-//    let conn = db_pool.get().unwrap();
+    let conn = db_pool.get().unwrap();
 
     let mut thread = request.get::<bodyparser::Struct<JsonThread>>();
     let ref slug = request.extensions.get::<Router>().unwrap().find("slug").unwrap_or("/");
@@ -107,7 +107,7 @@ pub fn create_thread(request : &mut Request) -> IronResult<Response> {
         _ => panic!("No body")
     }
 
-    match t_m::create_thread_pool(&mut dbThread, &db_pool) {
+    match t_m::create_thread(&mut dbThread, &conn) {// &db_pool) {
         Ok(val) => {
             resp.set_mut(JsonResponse::json(val)).set_mut(status::Created);
             return Ok(resp);
@@ -175,7 +175,7 @@ pub fn get_threads(request : &mut Request) -> IronResult<Response> {
 
 use time;
 pub fn get_users(request : &mut Request) -> IronResult<Response> {
-    let t1 = time::now();
+//    let t1 = time::now();
 
     let mut resp = Response::new();
 
@@ -216,7 +216,7 @@ pub fn get_users(request : &mut Request) -> IronResult<Response> {
         }
     }
 
-    let t2 = time::now();
-    println!("get_users {}", t2 - t1);
+//    let t2 = time::now();
+//    println!("get_users {}", t2 - t1);
     return Ok(resp);
 }
