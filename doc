@@ -55,4 +55,4 @@ EXPOSE 5000
 
 ENV PGPASSWORD 951103
 CMD service postgresql start &&\
-    cd $WORK/ && psql -h localhost -U docker -d docker -f schema.sql && ./target/release/RustDb
+    cd $WORK/ && psql -h localhost -U mavr -d docker -f schema.sql && ./target/release/RustDb
