@@ -31,6 +31,11 @@ mod conf;
 mod controllers {pub mod user; pub mod forum; pub mod post; pub mod thread; pub mod service;}
 
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
+
+const USER: &'static str = "mavr";
+const PASSWORD: &'static str = "951103";
+
+
 fn fill_route(router: &mut Router) {
     // ------------------ user ----------------------------
     router.post("/api/user/:nickname/create",controllers::user::create_user, "user_create");

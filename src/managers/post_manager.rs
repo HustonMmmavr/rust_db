@@ -107,33 +107,33 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresP
             dbPst.set_parent(&parent);
         }
 
-        db_posts.push(dbPst);
+//        db_posts.push(dbPst);
 
-//        insert_post.execute(&[&(dbPst.id as i32), &dbPst.parent, &dbPst.author_id, &dbPst.author_name, &dbPst.forum_id, &dbPst.forum_slug,
-//            &dbPst.created, &dbPst.message, &dbPst.thread]).unwrap();
+        insert_post.execute(&[&(dbPst.id as i32), &dbPst.parent, &dbPst.author_id, &dbPst.author_name, &dbPst.forum_id, &dbPst.forum_slug,
+            &dbPst.created, &dbPst.message, &dbPst.thread]).unwrap();
 
         posts.push(pst);
     }
 
-    let types = &[INT4, INT4, INT4, TEXT, INT4, TEXT, TIMESTAMPTZ, TEXT, INT4];
-    let mut data: Vec<Box<ToSql>> = vec![];
-
-    for db_post in db_posts {
-        data.push(Box::new(db_post.id as i32));
-        data.push(Box::new(db_post.parent));
-        data.push(Box::new(db_post.author_id));
-        data.push(Box::new(db_post.author_name));
-        data.push(Box::new(db_post.forum_id));
-        data.push(Box::new(db_post.forum_slug));
-        data.push(Box::new(db_post.created));
-        data.push(Box::new(db_post.message));
-        data.push(Box::new(db_post.thread));
-    }
-
-    let data = streaming_iterator::convert(data.into_iter()).map_ref(|v| &**v);
-    let mut reader = BinaryCopyReader::new(types, data);
-    let stmt = transaction.prepare(COPY_POSTS).unwrap();
-    stmt.copy_in(&[], &mut reader).unwrap();
+//    let types = &[INT4, INT4, INT4, TEXT, INT4, TEXT, TIMESTAMPTZ, TEXT, INT4];
+//    let mut data: Vec<Box<ToSql>> = vec![];
+//
+//    for db_post in db_posts {
+//        data.push(Box::new(db_post.id as i32));
+//        data.push(Box::new(db_post.parent));
+//        data.push(Box::new(db_post.author_id));
+//        data.push(Box::new(db_post.author_name));
+//        data.push(Box::new(db_post.forum_id));
+//        data.push(Box::new(db_post.forum_slug));
+//        data.push(Box::new(db_post.created));
+//        data.push(Box::new(db_post.message));
+//        data.push(Box::new(db_post.thread));
+//    }
+//
+//    let data = streaming_iterator::convert(data.into_iter()).map_ref(|v| &**v);
+//    let mut reader = BinaryCopyReader::new(types, data);
+//    let stmt = transaction.prepare(COPY_POSTS).unwrap();
+//    stmt.copy_in(&[], &mut reader).unwrap();
 
     transaction.commit();
     return Ok(posts);
@@ -288,11 +288,11 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
     use queries::thread::{SEARCH_THREAD, FIND_THREAD_ID_BY_SLUG};
 
     let mut t_query;
-    let v : i32 = 0;
+    let mut v : i32 = 0;
     match from_str::<i32>(&slug) {
         Ok(val) => {
 
-            t_query = conn.query(t_q::search_thread_by_id, &[&val]).unwrap();
+            t_query = conn.query(t_q::FIND_THREAD_ID, &[&val]).unwrap();
             v = val;
         },
         Err(_) => {
@@ -300,9 +300,9 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
         }
     }
 
-    pritnln!("{}", v);
-
-    println!("{:?}", t_query);
+//    println!("{}", v);
+//
+//    println!("{:?}", t_query);
 
 
 

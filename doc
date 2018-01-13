@@ -1,0 +1,21 @@
+FROM ubuntu:17.04
+
+ENV APP /app
+
+
+ENV USER root
+ADD install.sh install.sh
+RUN chmod +x install.sh && ./install.sh && rm install.sh
+
+RUN mkdir -p $APP
+
+WORKDIR $APP
+
+COPY . $APP/
+
+ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+RUN cargo build --release
+
+EXPOSE 5000
+
+CMD ./target/release/RustDb
