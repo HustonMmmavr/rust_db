@@ -104,7 +104,11 @@ fn main() {
     fill_route(&mut router);
     let mut chain = Chain::new(router);
 
-    let manager = (PostgresConnectionManager::new(uri, TlsMode::None)).unwrap();
+    let manager;
+    match (PostgresConnectionManager::new(uri, TlsMode::None)) {
+        Ok(val) => manager = val,
+        Err(e) => panic!("Error db {:?}", e)
+    }
     let pool = (r2d2::Pool::new(manager)).unwrap();
 
     chain.link_before(persistent::Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
@@ -114,16 +118,4 @@ fn main() {
 
     Iron::new(chain).listen(TcpListenerNoDelay { listener: Arc::new(listener) },
                                iron::Protocol::http()).unwrap();
-//    ).
-
-//    match Iron::new(chain).http("0.0.0.0:5000") {
-//        Ok(_) => {},
-//        Err(e) => {
-////            println!("{}", e.code());
-//            println!("Im here {:?}", e);
-//        }
-//    }
-//    Iron::new(chain).http("asdf:5000").unwrap();//listen(TcpListenerNoDelay { listener: Arc::new(listener) },
-    //    Protocol::Http).unwrap();
-//    ).
 }
