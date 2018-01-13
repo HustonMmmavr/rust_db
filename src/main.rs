@@ -109,7 +109,11 @@ fn main() {
         Ok(val) => manager = val,
         Err(e) => panic!("Error db {:?}", e)
     }
-    let pool = (r2d2::Pool::new(manager)).unwrap();
+    let pool;
+    match   (r2d2::Pool::new(manager)) {
+        Ok(val) => pool = val,
+        Err(e) => panic!("Error db manager {:?}", e)
+    }
 
     chain.link_before(persistent::Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
     chain.link(persistent::Read::<conf::DbPool>::both(pool));
