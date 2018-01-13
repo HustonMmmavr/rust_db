@@ -54,5 +54,7 @@ RUN cargo build --release
 EXPOSE 5000
 
 ENV PGPASSWORD 951103
-CMD service postgresql start &&\
-    cd $WORK/ && psql -h localhost -U mavr -d 951103 -f schema.sql && ./target/release/RustDb
+CMD service postgresql start
+CMD cd $WORK
+CMD psql -h localhost -U mavr -d 951103 -f schema.sql 
+CMD ./target/release/RustDb
