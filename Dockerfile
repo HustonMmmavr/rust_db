@@ -47,7 +47,6 @@ RUN chmod +x $WORK/install.sh && .$WORK/install.sh && rm $WORK/install.sh
 
 WORKDIR $WORK
 
-
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ADD Cargo.toml $WORK/Cargo.toml
 RUN cargo build --release
