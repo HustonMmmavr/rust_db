@@ -99,7 +99,7 @@ impl NetworkListener for TcpListenerNoDelay {
 use hyper::Error;
 fn main() {
 
-    let mut uri = "postgres://mavr:951103@0.0.0.0:5432/test";
+    let uri = "postgres://mavr:951103@0.0.0.0:5432/test";
     let mut router = Router::new();           // Alternative syntax:
     fill_route(&mut router);
     let mut chain = Chain::new(router);
@@ -114,7 +114,11 @@ fn main() {
     chain.link_before(persistent::Read::<bodyparser::MaxBodyLength>::one(MAX_BODY_LENGTH));
     chain.link(persistent::Read::<conf::DbPool>::both(pool));
     chain.link_after(JsonResponseMiddleware::new());
-    let listener = TcpListener::bind("0.0.0.0:5000").unwrap();
+    let listener;
+    match  TcpListener::bind("0.0.0.0:5001") {
+        Ok(val) => listener = val,
+        Err(e) => panic!("Error listen {:?}", e),
+    }
 
     println!("here");
     Iron::new(chain).listen(TcpListenerNoDelay { listener: Arc::new(listener) },
