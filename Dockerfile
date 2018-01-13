@@ -35,14 +35,36 @@ VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 USER root
 
+# install rust and cargo
+RUN set -e
+RUN triple=x86_64-unknown-linux-gnu
+
+# install curl (needed to install rust)
+RUN apt-get update && apt-get install -y curl gdb g++-multilib lib32stdc++6 libssl-dev libncurses5-dev
+
+# install rust
+RUN curl -sL https://static.rust-lang.org/dist/rust-nightly-$triple.tar.gz | tar xvz -C /tmp
+/tmp/rust-nightly-$triple/install.sh
+
+# install cargo
+RUN curl -sL https://static.rust-lang.org/cargo-dist/cargo-nightly-$triple.tar.gz | tar xvz -C /tmp
+/tmp/cargo-nightly-$triple/install.sh
+
+# cleanup package manager
+RUN apt-get remove --purge -y curl && apt-get autoclean && apt-get clean
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# prepare dir
+RUN mkdir /source
+
+
 # Копируем исходный код в Docker-контейнер
 ENV WORK /opt/rust_db
 ADD src/ $WORK/src/
 ADD V1__userinit.sql $WORK/schema.sql
 ADD install.sh $WORK/install.sh
 
-# install rust and cargo
-RUN chmod +x $WORK/install.sh && .$WORK/install.sh && rm $WORK/install.sh
+
 
 
 WORKDIR $WORK
