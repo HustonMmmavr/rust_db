@@ -20,9 +20,9 @@ extern crate hyper;
 
 use hyper::header::{Protocol};
 use std::net::TcpListener;
-use hyper::net::NetworkListener;
+//use hyper::net::NetworkListener;
 use std::net::SocketAddr;
-use hyper::net::HttpStream;
+//use hyper::net::HttpStream;
 use std::io;
 use std::sync::Arc;
 use ijr::{JsonResponseMiddleware, JsonResponse};
@@ -72,26 +72,26 @@ fn fill_route(router: &mut Router) {
     router.get("/api/service/status", controllers::service::status, "status");
 }
 
+////
+//#[derive(Clone)]
+//struct TcpListenerNoDelay {
+//    listener: Arc<TcpListener>,
+//}
 //
-#[derive(Clone)]
-struct TcpListenerNoDelay {
-    listener: Arc<TcpListener>,
-}
-
-impl NetworkListener for TcpListenerNoDelay {
-    type Stream = HttpStream;
-
-    fn accept(&mut self) -> Result<Self::Stream, hyper::Error> {
-        let tcp = try!(self.listener.accept());
-        try!(tcp.0.set_nodelay(true));
-        let stream = HttpStream(tcp.0);
-        Ok(stream)
-    }
-
-    fn local_addr(&mut self) -> io::Result<SocketAddr> {
-        self.listener.local_addr()
-    }
-}
+//impl NetworkListener for TcpListenerNoDelay {
+//    type Stream = HttpStream;
+//
+//    fn accept(&mut self) -> Result<Self::Stream, hyper::Error> {
+//        let tcp = try!(self.listener.accept());
+//        try!(tcp.0.set_nodelay(true));
+//        let stream = HttpStream(tcp.0);
+//        Ok(stream)
+//    }
+//
+//    fn local_addr(&mut self) -> io::Result<SocketAddr> {
+//        self.listener.local_addr()
+//    }
+//}
 
 
 fn main() {
