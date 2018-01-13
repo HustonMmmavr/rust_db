@@ -17,14 +17,12 @@ extern crate flame;
 extern crate postgres_binary_copy;
 extern crate streaming_iterator;
 extern crate hyper;
+
 use hyper::header::{Protocol};
 use std::net::TcpListener;
 use hyper::net::NetworkListener;
 use std::net::SocketAddr;
 use hyper::net::HttpStream;
-//use hyper::httparse::{HttpStream};
-//use hyper::net;
-//use hyper::
 use std::io;
 use std::sync::Arc;
 use ijr::{JsonResponseMiddleware, JsonResponse};
@@ -32,11 +30,9 @@ use ijr::{JsonResponseMiddleware, JsonResponse};
 use iron::prelude::*;
 use iron::status;
 use router::Router;
-//use hyper;
 use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 use r2d2::{Pool, PooledConnection};
 mod queries;
-//mod hyper::net;
 mod models;
 mod managers;
 #[macro_use]
@@ -99,7 +95,7 @@ impl NetworkListener for TcpListenerNoDelay {
 
 
 fn main() {
-    let mut uri = "postgres://mavr:951103@localhost/test5";
+    let mut uri = "postgres://mavr:951103@localhost/951103";
     let mut router = Router::new();           // Alternative syntax:
     fill_route(&mut router);
     let mut chain = Chain::new(router);
