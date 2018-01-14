@@ -109,6 +109,7 @@ fn main() {
         Ok(val) => manager = val,
         Err(e) => panic!("Error db {:?}", e)
     }
+    
     let pool;
     match   (r2d2::Pool::new(manager)) {
         Ok(val) => pool = val,
