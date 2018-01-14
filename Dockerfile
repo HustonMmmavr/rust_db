@@ -14,8 +14,8 @@ USER postgres
 # Create a PostgreSQL role named ``docker`` with ``docker`` as the password and
 # then create a database `docker` owned by the ``docker`` role.
 RUN /etc/init.d/postgresql start &&\
-    psql --command "CREATE USER mavr1 WITH SUPERUSER PASSWORD '951103';" &&\
-    createdb -E UTF8 -T template0 -O mavr1 test &&\
+    psql --command "CREATE USER mavr WITH SUPERUSER PASSWORD '951103';" &&\
+    createdb -E UTF8 -T template0 -O mavr test &&\
     /etc/init.d/postgresql stop
 
 # Adjust PostgreSQL configuration so that remote connections to the
@@ -56,5 +56,5 @@ EXPOSE 5000
 ENV PGPASSWORD 951103
 CMD service postgresql start
 CMD cd $WORK
-CMD psql -h localhost -U mavr1 -d test -f schema.sql
+CMD psql -h localhost -U mavr -d test -f schema.sql
 CMD ./target/release/RustDb
