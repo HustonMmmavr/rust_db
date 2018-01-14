@@ -57,6 +57,7 @@ RUN apt-get install -q -y \
     /tmp/* \
     /var/tmp/* && \
 mkdir /source
+VOLUME [ "/source" ]
 
 #RUN apt-get install curl -q -y
 #RUN apt-get install rustc -q -y
