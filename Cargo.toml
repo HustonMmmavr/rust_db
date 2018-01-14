@@ -5,28 +5,17 @@ authors = ["HustonMavr <huston.mavr@gmail.com>"]
 
 [dependencies]
 hyper = "0.10.7"
-futures = "0.1.14"
 hyper-router = "*"
 r2d2 = "0.8.2"
 r2d2_postgres = "*"
 router = "*"
-postgres-binary-copy = "0.5.0"
 chrono = { version = "0.4", features = ["serde", "rustc-serialize"] }
-streaming-iterator="*"
 persistent = "0.0.6"
 params = "*"
-postgres_array="*"
 serde = "*"
 serde_derive = "*"
 serde_json = "*"
 iron-json-response = "*"
-time="*"
-flame="*"
-[dependencies.iron]
-version = "*"
-
-[dependencies.bodyparser]
-
-git = "https://github.com/iron/body-parser.git"
-[dependencies.postgres]
-features = ["with-time", "with-chrono"]
+bodyparser = "*"
+iron = "*"
+postgres = {version = "*", features = ["with-time", "with-chrono"]}

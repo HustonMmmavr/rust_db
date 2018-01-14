@@ -17,10 +17,9 @@ use serde_derive;
 use serde_json;
 use params::{Params, Value};
 use std::io::copy;
-use ijr;
 use db;
-use ijr::{JsonResponseMiddleware, JsonResponse};
-
+use ijr::{JsonResponse};
+// use params;
 use queries::forum as f_q;
 use queries::user as u_q;
 use models::user::{User, empty_user, copy_user};
@@ -30,7 +29,8 @@ use managers::forum_manager::*;
 use managers::forum_manager as f_m;
 use managers::thread_manager as t_m;
 use models::thread::{Thread, JsonThread, empty_thread, copy_json_thread};
-use flame;
+// use flame;
+use params;
 
 pub fn create(request : &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
@@ -87,7 +87,7 @@ pub fn get_forum(request : &mut Request) -> IronResult<Response> {
         }
     }
 }
-use params;
+
 
 pub fn create_thread(request : &mut Request) -> IronResult<Response> {
     let mut resp = Response::new();
@@ -173,7 +173,7 @@ pub fn get_threads(request : &mut Request) -> IronResult<Response> {
     return Ok(resp);
 }
 
-use time;
+// use time;
 pub fn get_users(request : &mut Request) -> IronResult<Response> {
 //    let t1 = time::now();
 

@@ -1,7 +1,7 @@
 use postgres::rows::Row;
 use postgres::types::TIMESTAMPTZ;
 use postgres::types::FromSql;
-use time;
+// use time;
 use postgres;
 #[macro_use]
 use serde_derive;

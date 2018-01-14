@@ -18,8 +18,8 @@ use serde_json;
 use params::{Params, Value};
 use std::io::copy;
 use ijr;
-use db;
-use ijr::{JsonResponseMiddleware, JsonResponse};
+// use db;
+use ijr::{ JsonResponse};
 
 use models::error::{ErrorMsg};
 use managers::forum_manager as f_m;

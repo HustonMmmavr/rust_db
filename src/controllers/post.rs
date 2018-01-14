@@ -20,7 +20,7 @@ use params;
 use std::io::copy;
 use ijr;
 use db;
-use ijr::{JsonResponseMiddleware, JsonResponse};
+use ijr::{JsonResponse};
 use models::error::*;
 use managers::post_manager::*;
 use models::post::JsonPost;

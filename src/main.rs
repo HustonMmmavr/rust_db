@@ -6,16 +6,16 @@ extern crate postgres;
 extern crate persistent;
 extern crate params;
 extern crate bodyparser;
-extern crate time;
+// extern crate time;
 extern crate chrono;
-extern crate postgres_array;
+// extern crate postgres_array;
 extern crate iron_json_response as ijr;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
-extern crate flame;
-extern crate postgres_binary_copy;
-extern crate streaming_iterator;
+// extern crate flame;
+// extern crate postgres_binary_copy;
+// extern crate streaming_iterator;
 extern crate hyper;
 //use hyper//::http::message::Protocol;
 
@@ -45,8 +45,8 @@ mod controllers {pub mod user; pub mod forum; pub mod post; pub mod thread; pub 
 
 const MAX_BODY_LENGTH: usize = 1024 * 1024 * 10;
 
-const USER: &'static str = "mavr";
-const PASSWORD: &'static str = "951103";
+// const USER: &'static str = "mavr";
+// const PASSWORD: &'static str = "951103";
 
 
 fn fill_route(router: &mut Router) {
