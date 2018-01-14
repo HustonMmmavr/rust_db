@@ -3,10 +3,14 @@ FROM ubuntu:17.04
 # Установка postgresql
 #
 
-RUN apt-get -y update
+RUN apt-get -y update && apt-get install -y wget git
 
 ENV PGVER 10
-RUN apt-get install -y postgresql-$PGVER
+RUN apt-get update -q
+RUN apt-get install -q -y wget
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ zesty-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+RUN apt-get update -q
+RUN apt-get install -q -y git golang-go postgresql-10 postgresql-contrib-10
 
 # Run the rest of the commands as the ``postgres`` user created by the ``postgres-$PGVER`` package when it was ``apt-get installed``
 USER postgres
