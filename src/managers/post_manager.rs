@@ -37,6 +37,10 @@ use serde_json::from_str;
 pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresPool) -> Result<Vec<Post>, i32> {
 
     let created: chrono::DateTime<Utc> = Utc::now();
+    let mut time = format!("{:?}", created);
+    let len = time.len();
+    time.truncate(len - 4);
+    time.push_str("Z");
     let mut posts: Vec<Post> = Vec::new();
 
     // Search user by prepared
@@ -86,7 +90,7 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresP
 
         let mut pst = Post{ id: p_id, author: u_name.clone(),
             message: message.clone(), forum: thread.forum.to_string(), thread: thread.id,
-            parent: 0, created:  created , isEdited: false
+            parent: 0, created:  time.clone() , isEdited: false
         };
 
 

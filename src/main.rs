@@ -125,7 +125,7 @@ fn main() {
         Err(e) => panic!("Error listen {:?}", e),
     }
 
-    println!("here");
+//    println!("here");
     Iron::new(chain).listen(TcpListenerNoDelay { listener: Arc::new(listener) },
                                iron::Protocol::http()).unwrap();
 }
