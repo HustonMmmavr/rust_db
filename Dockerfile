@@ -10,6 +10,7 @@ RUN apt-get update -q
 RUN apt-get install -q -y wget
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ zesty-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 RUN apt-get update -q
+RUN apt-get install -q -y git postgresql-10 postgresql-contrib-10
 
 # Run the rest of the commands as the ``postgres`` user created by the ``postgres-$PGVER`` package when it was ``apt-get installed``
 USER postgres
@@ -38,8 +39,8 @@ VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 USER root
 
-RUN apt-get install rustc -q -y
-RUN curl -sSf https://static.rust-lang.org/rustup.sh | sh
+RUN apt-get install rustc -q y
+curl -sSf https://static.rust-lang.org/rustup.sh | sh
 #! /bin/bash
 
 # exit if a command fails
