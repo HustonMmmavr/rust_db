@@ -80,7 +80,7 @@ WORKDIR $WORK
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ADD Cargo.toml $WORK/Cargo.toml
-RUN cargo build --release
+RUN cargo build -v --release
 
 EXPOSE 5000
 
