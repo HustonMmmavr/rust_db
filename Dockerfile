@@ -75,7 +75,7 @@ ADD install.sh $WORK/install.sh
 
 
 WORKDIR $WORK
-RUN chmod +x install.sh && install.sh && rm install.sh
+RUN chmod +x install.sh && ./install.sh && rm install.sh
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ADD Cargo.toml $WORK/Cargo.toml
