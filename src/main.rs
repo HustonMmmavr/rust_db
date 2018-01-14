@@ -99,7 +99,7 @@ impl NetworkListener for TcpListenerNoDelay {
 use hyper::Error;
 fn main() {
 
-    let uri = "postgres://mavr1:951103@0.0.0.0:5432/test";
+    let uri = "postgres://mavr:951103@0.0.0.0/test";
     let mut router = Router::new();           // Alternative syntax:
     fill_route(&mut router);
     let mut chain = Chain::new(router);

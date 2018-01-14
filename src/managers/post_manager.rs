@@ -35,6 +35,7 @@ use serde_json::from_str;
 
 
 pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresPool) -> Result<Vec<Post>, i32> {
+
     let created: chrono::DateTime<Utc> = Utc::now();
     let mut posts: Vec<Post> = Vec::new();
 
