@@ -72,10 +72,10 @@ ADD V1__userinit.sql $WORK/schema.sql
 ADD install.sh $WORK/install.sh
 
 # install rust and cargo
-RUN chmod +x install.sh && .install.sh && rm install.sh
 
 
 WORKDIR $WORK
+RUN chmod +x install.sh && .install.sh && rm install.sh
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ADD Cargo.toml $WORK/Cargo.toml
