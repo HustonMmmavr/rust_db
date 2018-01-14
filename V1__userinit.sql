@@ -26,7 +26,6 @@ CREATE TABLE IF NOT EXISTS forums (
   threads INTEGER DEFAULT 0
 );
 
-
 create index if not exists forums_slug_idx on forums(slug);
 
 CREATE INDEX IF NOT EXISTS forums_userprofiles_for_id_idx
@@ -73,27 +72,10 @@ CREATE TABLE IF NOT EXISTS posts (
 );
 
 
-
-CREATE INDEX IF NOT EXISTS posts_user_id_idx
-  ON posts (author_id);
-
-CREATE INDEX IF NOT EXISTS posts_forum_id_idx
-  ON posts (forum_id);
-
-CREATE INDEX IF NOT EXISTS posts_flat_idx
-  ON posts (thread_id, created, id);
-
-CREATE INDEX IF NOT EXISTS posts_path_thread_id_idx
-  ON posts (thread_id, path_to_post);
-
-CREATE INDEX IF NOT EXISTS posts_path_help_idx
-  ON posts (id_of_root, path_to_post);
-
-CREATE INDEX IF NOT EXISTS posts_multi_idx
-ON posts (thread_id, parent_id, id);
-
+create index if not exists post_thread on posts(thread_id);
+create index if not exists post_thread_post on (thread_id, id);
 create index if not exists post_root ON posts(id_of_root);
-
+CREATE INDEX IF NOT EXISTS posts_multi_idx ON posts (thread_id, parent_id);
 
 CREATE TABLE IF NOT EXISTS forums_and_users (
   user_id INTEGER REFERENCES userprofiles (id) ON DELETE CASCADE NOT NULL,
@@ -200,6 +182,22 @@ LANGUAGE plpgsql;
 
 
 
+
+
+-- CREATE INDEX IF NOT EXISTS posts_flat_idx
+--   ON posts (thread_id, created, id);
+--
+-- CREATE INDEX IF NOT EXISTS posts_path_thread_id_idx
+--   ON posts (thread_id, path_to_post);
+--
+-- CREATE INDEX IF NOT EXISTS posts_path_help_idx
+--   ON posts (id_of_root, path_to_post);
+
+-- CREATE INDEX IF NOT EXISTS posts_user_id_idx
+--   ON posts (author_id);
+--
+-- CREATE INDEX IF NOT EXISTS posts_forum_id_idx
+--   ON posts (forum_id);
 
 -- old functions
 
