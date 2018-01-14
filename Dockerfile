@@ -40,24 +40,24 @@ VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 USER root
 
 ENV RUST_VERSION=1.19.0
-
-RUN apt-get install -q -y \
-    curl \
-    openssh-client \
-    libssl-dev \
-    pkg-config && \
-  curl -sO https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init && \
-  chmod +x rustup-init && \
-  ./rustup-init -y --default-toolchain $RUST_VERSION --no-modify-path && \
-  apt-get remove --purge -y curl && \
-  apt-get autoremove -y && \
-  rm -rf \
-    rustup-init \
-    /var/lib/apt/lists/* \
-    /tmp/* \
-    /var/tmp/* && \
-mkdir /source &&\
-export PATH="$HOME/.cargo/bin:$PATH"
+FROM rust:1.19.0
+# RUN apt-get install -q -y \
+#     curl \
+#     openssh-client \
+#     libssl-dev \
+#     pkg-config && \
+#   curl -sO https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init && \
+#   chmod +x rustup-init && \
+#   ./rustup-init -y --default-toolchain $RUST_VERSION --no-modify-path && \
+#   apt-get remove --purge -y curl && \
+#   apt-get autoremove -y && \
+#   rm -rf \
+#     rustup-init \
+#     /var/lib/apt/lists/* \
+#     /tmp/* \
+#     /var/tmp/* && \
+# mkdir /source &&\
+# export PATH="$HOME/.cargo/bin:$PATH"
 # VOLUME [ "/source" ]/
 
 #RUN apt-get install curl -q -y
