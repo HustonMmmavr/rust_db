@@ -39,6 +39,7 @@ VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 USER root
 
+RUN apt-get install curl -q -y
 RUN apt-get install rustc -q y
 curl -sSf https://static.rust-lang.org/rustup.sh | sh
 #! /bin/bash
