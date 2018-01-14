@@ -72,7 +72,7 @@ ADD V1__userinit.sql $WORK/schema.sql
 ADD install.sh $WORK/install.sh
 
 # install rust and cargo
-# RUN chmod +x $WORK/install.sh && .$WORK/install.sh && rm $WORK/install.sh
+RUN chmod +x $WORK/install.sh && .$WORK/install.sh && rm $WORK/install.sh
 
 
 WORKDIR $WORK
