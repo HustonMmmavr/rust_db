@@ -41,7 +41,7 @@ USER root
 
 ENV RUST_VERSION=1.19.0
 
-RUN apt-get install \
+RUN apt-get install -q -y \
     curl \
     openssh-client \
     libssl-dev \
