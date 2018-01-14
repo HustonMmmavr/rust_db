@@ -42,34 +42,34 @@ USER root
 #! /bin/bash
 
 # exit if a command fails
-RUN set -e
+# RUN set -e
 
-RUN triple=x86_64-unknown-linux-gnu
+# RUN triple=x86_64-unknown-linux-gnu
 
-# install curl (needed to install rust)
-RUN apt-get update && apt-get install -y curl gdb g++-multilib lib32stdc++6 libssl-dev libncurses5-dev
+# # install curl (needed to install rust)
+# RUN apt-get update && apt-get install -y curl gdb g++-multilib lib32stdc++6 libssl-dev libncurses5-dev
 
-# install rust
-RUN curl -sL https://static.rust-lang.org/dist/rust-nightly-$triple.tar.gz | tar xvz -C /tmp
-RUN /tmp/rust-nightly-$triple/install.sh
+# # install rust
+# RUN curl -sL https://static.rust-lang.org/dist/rust-nightly-$triple.tar.gz | tar xvz -C /tmp
+# RUN /tmp/rust-nightly-$triple/install.sh
 
-# install cargo
-RUN curl -sL https://static.rust-lang.org/cargo-dist/cargo-nightly-$triple.tar.gz | tar xvz -C /tmp
-RUN /tmp/cargo-nightly-$triple/install.sh
+# # install cargo
+# RUN curl -sL https://static.rust-lang.org/cargo-dist/cargo-nightly-$triple.tar.gz | tar xvz -C /tmp
+# RUN /tmp/cargo-nightly-$triple/install.sh
 
-# cleanup package manager
-RUN apt-get remove --purge -y curl && apt-get autoclean && apt-get clean
-RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# # cleanup package manager
+# RUN apt-get remove --purge -y curl && apt-get autoclean && apt-get clean
+# RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# prepare dir
-RUN mkdir /source
+# # prepare dir
+# RUN mkdir /source
 
 
 # Копируем исходный код в Docker-контейнер
 ENV WORK /opt/rust_db
 ADD src/ $WORK/src/
 ADD V1__userinit.sql $WORK/schema.sql
-# ADD install.sh $WORK/install.sh
+ADD install.sh $WORK/install.sh
 
 # install rust and cargo
 # RUN chmod +x $WORK/install.sh && .$WORK/install.sh && rm $WORK/install.sh
@@ -84,7 +84,4 @@ RUN cargo build --release
 EXPOSE 5000
 
 ENV PGPASSWORD 951103
-CMD service postgresql start
-CMD cd $WORK
-CMD psql -h localhost -U mavr -d test -f schema.sql
-CMD ./target/release/RustDb
+CMD service postgresql start && cd $WORK/ && psql -h localhost -U mavr -d test -f schema.sql && ./target/release/RustDb
