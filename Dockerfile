@@ -56,8 +56,9 @@ RUN apt-get install -q -y \
     /var/lib/apt/lists/* \
     /tmp/* \
     /var/tmp/* && \
-mkdir /source
-VOLUME [ "/source" ]
+mkdir /source &&\
+export PATH="$HOME/.cargo/bin:$PATH"
+# VOLUME [ "/source" ]/
 
 #RUN apt-get install curl -q -y
 #RUN apt-get install rustc -q -y
