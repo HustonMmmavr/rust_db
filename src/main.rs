@@ -103,6 +103,10 @@ fn main() {
     let mut router = Router::new();           // Alternative syntax:
     fill_route(&mut router);
     let mut chain = Chain::new(router);
+    let time = chrono::Utc::now();
+    // let mills = chrono::
+    // let dt = time.format("%Y-%m-%dT%H:%M:%S.000Z");
+    // println!("{:?} {}", time, time.milliseconds());
 
     let manager;
     match (PostgresConnectionManager::new(uri, TlsMode::None)) {

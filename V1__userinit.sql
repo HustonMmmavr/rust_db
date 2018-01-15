@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS votes (
   CONSTRAINT one_owner_thread_pair UNIQUE (owner_id, thread_id)
 );
 
-create index if not exists thread_vote_user on votes(ower_id, thread_id);
+create index if not exists thread_vote_user on votes(owner_id, thread_id);
 create index if not exists thread_vote on votes(thread_id);
 
 CREATE OR REPLACE FUNCTION create_thread(u_name citext, created timestamptz, f_slug citext,

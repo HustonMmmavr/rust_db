@@ -60,6 +60,9 @@ pub fn read_thread(thread: &mut Thread, row: Row) {
     thread.id = row.get("id");
     let data = row.get_bytes("created").unwrap();
     let tz: chrono::DateTime<chrono::Utc> = postgres::types::FromSql::from_sql(&TIMESTAMPTZ, data).unwrap();
-    let time = format!("{:?}", tz);
+    let mut time = tz.format("%Y-%m-%dT%H:%M:%S.%f").to_string();//format!("{:?}", tz);
+    let len = time.len();
+    time.truncate(len - 3);
+    time.push_str("Z");
     thread.created = Some(time.to_string());
 }
