@@ -38,9 +38,9 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresP
 
     let created: chrono::DateTime<Utc> = Utc::now();
     let mut time = format!("{:?}", created);
-    let len = time.len();
-    time.truncate(len - 4);
-    time.push_str("Z");
+    // let len = time.len();
+    // time.truncate(len - 4);
+    // time.push_str("Z");
     let mut posts: Vec<Post> = Vec::new();
 
     // Search user by prepared
