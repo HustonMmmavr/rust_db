@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS posts (
 
 
 create index if not exists post_thread on posts(thread_id);
-create index if not exists post_thread_post on (thread_id, id);
+create index if not exists post_thread_post on posts(thread_id, id);
 create index if not exists post_root ON posts(id_of_root);
 CREATE INDEX IF NOT EXISTS posts_multi_idx ON posts (thread_id, parent_id);
 
