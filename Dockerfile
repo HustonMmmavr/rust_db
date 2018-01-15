@@ -39,8 +39,8 @@ VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 USER root
 
-ENV RUST_VERSION=1.19.0
-FROM rust:1.19.0
+# ENV RUST_VERSION=1.19.0
+# FROM rust:1.19.0
 # RUN apt-get install -q -y \
 #     curl \
 #     openssh-client \
@@ -58,7 +58,7 @@ FROM rust:1.19.0
 #     /var/tmp/* && \
 # mkdir /source &&\
 # export PATH="$HOME/.cargo/bin:$PATH"
-# VOLUME [ "/source" ]/
+# VOLUME [ "/source" ]
 
 #RUN apt-get install curl -q -y
 #RUN apt-get install rustc -q -y
@@ -93,13 +93,13 @@ FROM rust:1.19.0
 ENV WORK /opt/rust_db
 ADD src/ $WORK/src/
 ADD V1__userinit.sql $WORK/schema.sql
-# ADD install.sh $WORK/install.sh
+ADD install.sh $WORK/install.sh
 
 # install rust and cargo
 
 
 WORKDIR $WORK
-# RUN chmod +x install.sh && ./install.sh && rm install.sh
+RUN chmod +x install.sh && ./install.sh && rm install.sh
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ADD Cargo.toml $WORK/Cargo.toml
