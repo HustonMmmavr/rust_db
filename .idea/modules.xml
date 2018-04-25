@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RustDb.iml" filepath="$PROJECT_DIR$/RustDb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/rust_db.iml" filepath="$PROJECT_DIR$/.idea/rust_db.iml" />
     </modules>
   </component>
 </project>

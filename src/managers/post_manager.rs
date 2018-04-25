@@ -172,6 +172,7 @@ pub fn create_posts(thread: &Thread, json_posts: Vec<JsonPost>, pool: &PostgresP
 pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: String, conn: &PostgresConnection) -> Result<Vec<Post>, i32> {
     use queries::thread::{SEARCH_THREAD, FIND_THREAD_ID_BY_SLUG};
 
+    println!("{}", desc);
     let mut t_query;
     let mut v : i32 = 0;
     match from_str::<i32>(&slug) {
@@ -194,8 +195,8 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
         t_id = row.get("id");
     }
 
-    let sort_order;
-    let sign_sort;
+    let mut sort_order;
+    let mut sign_sort;
     if desc == true {
         sign_sort = " < ";
         sort_order = " DESC ";
@@ -256,9 +257,9 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
     if sort == "parent_tree" {
         query += PARENT_TREE_SORT;
         if since.len() > 0 {
-            query += " AND path_to_post ";
+            query += " AND id ";
             query += sign_sort;
-            query += &format!(" (SELECT path_to_post FROM posts WHERE id = ${}) ", counter);
+            query += &format!(" (SELECT id_of_root FROM posts WHERE id = ${}) ", counter);
             counter += 1;
         }
         query += " ORDER BY id ";
@@ -267,10 +268,17 @@ pub fn get_posts_sort(slug: &str, limit: i32, desc: bool, since: String, sort: S
             query += &format!(" LIMIT ${} ", counter);
             counter += 1;
         }
-        query += ") ";
-        query += " ORDER BY path_to_post ";
-        query += sort_order;
+
+        query += ") ORDER BY ";
+//        query += sort_order; + ",";
+        if (desc == true) {
+            query += " id_of_root DESC, ";
+        }
+        query += " path_to_post ";
+//        query += sort_order;
     }
+
+    println!("{}", query);
 
     let binds_borrowed = args.iter().map(|s| &**s).collect::<Vec<_>>();//args.iter().map(|b| &*b as &ToSql).collect::<Vec<_>>();
     let query_rows = conn.query(&query, &binds_borrowed).unwrap();
