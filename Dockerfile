@@ -114,7 +114,7 @@ RUN export PATH="$HOME/.cargo/bin:$PATH"
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ADD Cargo.toml $WORK/Cargo.toml
 #RUN ./root/cargo update -p libc
-RUN cargo build -v --release
+RUN $HOME/.cargo/env build -v --release
 
 EXPOSE 5000
 
