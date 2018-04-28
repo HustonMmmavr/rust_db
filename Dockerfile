@@ -98,9 +98,9 @@ ENV WORK /opt/rust_db
 ADD src/ $WORK/src/
 ADD V1__userinit.sql $WORK/schema.sql
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
-RUN echo 'source $HOME/.cargo/env' >> $HOME/.bashrc
-RUN echo 'source $HOME/.cargo/env'
-RUN cd root && ls -a 
+#RUN echo 'source $HOME/.cargo/env' >> $HOME/.bashrc
+#№RUN echo 'source $HOME/.cargo/env'
+#RUN cd root && ls -a 
 #ADD install.sh $WORK/install.sh
 
 # install rust and cargo
@@ -111,8 +111,8 @@ RUN cd root && ls -a
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ADD Cargo.toml $WORK/Cargo.toml
-RUN cargo update -p libc
-RUN cargo build -v --release
+#RUN ./root/cargo update -p libc
+RUN ./root/cargo build -v --release
 
 EXPOSE 5000
 
