@@ -112,7 +112,7 @@ RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ADD Cargo.toml $WORK/Cargo.toml
 #RUN ./root/cargo update -p libc
-RUN ./root/cargo build -v --release
+RUN /root/cargo build -v --release
 
 EXPOSE 5000
 
