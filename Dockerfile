@@ -100,7 +100,7 @@ ADD V1__userinit.sql $WORK/schema.sql
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
 RUN echo 'source $HOME/.cargo/env' >> $HOME/.bashrc
 RUN echo 'source $HOME/.cargo/env'
-RUN ls -a 
+RUN cd home && ls -a 
 #ADD install.sh $WORK/install.sh
 
 # install rust and cargo
