@@ -3,7 +3,7 @@ FROM ubuntu:17.10
 # Установка postgresql
 #
 
-RUN apt-get -y update && apt-get install -y wget git
+RUN apt-get -y update && apt-get install -y wget git && apt-get install curl -y
 
 ENV PGVER 10
 RUN apt-get update -q
@@ -42,60 +42,13 @@ VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 
 USER root
-RUN apt-get install curl -q -y
-RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
-ENV PATH=/root/.cargo/bin:$PATH
-#RUN export PATH="$HOME/.cargo/bin:$PATH"
-#RUN exec source $HOME/.profile
-#RUN cat $HOME/.profile
-# ENV RUST_VERSION=1.19.0
-# FROM rust:1.19.0
-# RUN apt-get install -q -y \
-#     curl \
-#     openssh-client \
-#     libssl-dev \
-#     pkg-config && \
-#   curl -sO https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init && \
-#   chmod +x rustup-init && \
-#   ./rustup-init -y --default-toolchain $RUST_VERSION --no-modify-path && \
-#   apt-get remove --purge -y curl && \
-#   apt-get autoremove -y && \
-#   rm -rf \
-#     rustup-init \
-#     /var/lib/apt/lists/* \
-#     /tmp/* \
-#     /var/tmp/* && \
-# mkdir /source &&\
-# export PATH="$HOME/.cargo/bin:$PATH"
-# VOLUME [ "/source" ]
-
-#RUN apt-get install curl -q -y
-#RUN apt-get install rustc -q -y
-#RUN curl -sSf https://static.rust-lang.org/rustup.sh | sh
-#! /bin/bash
-
-# exit if a command fails
-# RUN set -e
-
-# RUN triple=x86_64-unknown-linux-gnu
-
-# # install curl (needed to install rust)
-# RUN apt-get update && apt-get install -y curl gdb g++-multilib lib32stdc++6 libssl-dev libncurses5-dev
-
-# # install rust
-# RUN curl -sL https://static.rust-lang.org/dist/rust-nightly-$triple.tar.gz | tar xvz -C /tmp
-# RUN /tmp/rust-nightly-$triple/install.sh
-
-# # install cargo
-# RUN curl -sL https://static.rust-lang.org/cargo-dist/cargo-nightly-$triple.tar.gz | tar xvz -C /tmp
-# RUN /tmp/cargo-nightly-$triple/install.sh
-
-# # cleanup package manager
-# RUN apt-get remove --purge -y curl && apt-get autoclean && apt-get clean
-# RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# # prepare dir
-# RUN mkdir /source
+RUN mkdir /rust
+WORKDIR /rust
+RUN curl https://sh.rustup.rs -s >> rustup.sh
+RUN chmod 755 /rust/rustup.sh
+RUN ./rustup.sh -y
+ENV PATH=/root/.cargo/bin:$PATH SSL_VERSION=1.0.2h
+RUN rustup default 1.11.0
 
 
 # Копируем исходный код в Docker-контейнер
