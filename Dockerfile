@@ -44,7 +44,8 @@ VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 USER root
 RUN apt-get install curl -q -y
 RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
-RUN export PATH="$HOME/.cargo/bin:$PATH"
+ENV PATH=/root/.cargo/bin:$PATH
+#RUN export PATH="$HOME/.cargo/bin:$PATH"
 #RUN exec source $HOME/.profile
 #RUN cat $HOME/.profile
 # ENV RUST_VERSION=1.19.0
