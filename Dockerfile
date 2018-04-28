@@ -43,8 +43,6 @@ VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 USER root
 RUN apt-get install curl -q -y
-RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
-RUN echo 'source $HOME/.cargo/env' >> $HOME/.bashrc
 # ENV RUST_VERSION=1.19.0
 # FROM rust:1.19.0
 # RUN apt-get install -q -y \
@@ -99,6 +97,8 @@ RUN echo 'source $HOME/.cargo/env' >> $HOME/.bashrc
 ENV WORK /opt/rust_db
 ADD src/ $WORK/src/
 ADD V1__userinit.sql $WORK/schema.sql
+RUN curl https://sh.rustup.rs -sSf | bash -s -- -y
+RUN echo 'source $HOME/.cargo/env' >> $HOME/.bashrc
 #ADD install.sh $WORK/install.sh
 
 # install rust and cargo
