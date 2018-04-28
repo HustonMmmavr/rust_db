@@ -130,7 +130,7 @@ pub fn get_posts(request: &mut Request) -> IronResult<Response> {
     let data = request.get::<Params>();
     let slug = request.extensions.get::<Router>().unwrap().find("slug_or_id").unwrap();
 
-    println!("{:?}", data);
+    //println!("{:?}", data);
     let map = data.unwrap();
     let mut limit = -1;
     match map.find(&["limit"]) {
