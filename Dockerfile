@@ -58,7 +58,7 @@ ADD V1__userinit.sql $WORK/schema.sql
 
 #RUN echo 'source $HOME/.cargo/env' >> $HOME/.bashrc
 #№RUN echo 'source $HOME/.cargo/env'
-RUN ls -al /root
+# RUN ls -al /root
 #RUN echo $HOME
 #ADD install.sh $WORK/install.sh
 
