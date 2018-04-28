@@ -42,6 +42,7 @@ VOLUME ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 
 USER root
+RUN apt-get install curl
 RUN curl -sSf https://static.rust-lang.org/rustup.sh | /bin/bash -s -- --yes
 # ENV RUST_VERSION=1.19.0
 # FROM rust:1.19.0
