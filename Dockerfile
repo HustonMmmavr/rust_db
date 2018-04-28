@@ -65,7 +65,7 @@ RUN ls -al /root
 # install rust and cargo
 
 
-#WORKDIR $WORK
+WORKDIR $WORK
 #RUN chmod +x install.sh && ./install.sh && rm install.sh
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
