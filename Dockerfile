@@ -3,7 +3,7 @@ FROM ubuntu:17.10
 # Установка postgresql
 #
 
-RUN apt-get -y update && apt-get install -y wget git && apt-get install curl -y
+RUN apt-get -y update && apt-get install -y wget git && apt-get install curl -y && apt-get install build-essential -y
 
 ENV PGVER 10
 RUN apt-get update -q
