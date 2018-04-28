@@ -117,7 +117,8 @@ RUN ls -al /root
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 ADD Cargo.toml $WORK/Cargo.toml
 #RUN ./root/cargo update -p libc
-RUN cargo build -v --release
+RUN bash -c 'source $HOME/.cargo/env; cargo build -v --release'
+# RUN cargo build -v --release
 
 EXPOSE 5000
 
