@@ -48,7 +48,7 @@ RUN curl https://sh.rustup.rs -s >> rustup.sh
 RUN chmod 755 /rust/rustup.sh
 RUN ./rustup.sh -y
 ENV PATH=/root/.cargo/bin:$PATH SSL_VERSION=1.0.2h
-#RUN rustup default 1.11.0
+RUN rustup default 1.25.0
 
 
 # Копируем исходный код в Docker-контейнер
