@@ -48,7 +48,8 @@ RUN curl https://sh.rustup.rs -s >> rustup.sh
 RUN chmod 755 /rust/rustup.sh
 RUN ./rustup.sh -y
 ENV PATH=/root/.cargo/bin:$PATH SSL_VERSION=1.0.2h
-RUN rustup default 1.25.0
+RUN apt-get remove --purge -y curl && apt-get autoclean && apt-get clean
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 
 # Копируем исходный код в Docker-контейнер
